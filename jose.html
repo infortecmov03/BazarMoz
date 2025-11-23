@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <!-- head.php -->
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="icon" type="image/png" href="/icons/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+<link rel="shortcut icon" href="/icons/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+<title>Bazar Moçambique ONLINE STORE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --secondary: #333333;
+            --accent: #0056b3;
+            --light: #f8f9fa;
+            --border: #e0e0e0;
+            --text: #2d3748;
+            --text-light: #718096;
+            --success: #0a8c4d;
+            --warning: #e53e3e;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            background-color: #ffffff;
+            color: var(--text);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header */
+        header {
+            background-color: white;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo span {
+            color: var(--accent);
+        }
+        
+        .cart-icon {
+            font-size: 20px;
+            color: var(--primary);
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #2d3748 100%);
+            color: white;
+            padding: 80px 0 60px 0;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 0;
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto;
+            color: rgba(255,255,255,0.8);
+            font-weight: 300;
+        }
+        
+        .delivery-notice {
+            background-color: var(--success);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            margin-top: 20px;
+            display: inline-block;
+            font-weight: 500;
+        }
+        
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            color: var(--primary);
+            font-size: 2rem;
+            font-weight: 600;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 80px;
+        }
+        
+        .product-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+        
+        .product-image {
+            height: 200px;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-color: #f9f9f9;
+        }
+        
+        .product-info {
+            padding: 20px;
+        }
+        
+        .product-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+        
+        .product-title {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 600;
+            flex: 1;
+        }
+        
+        .product-stock {
+            display: inline-block;
+            background-color: var(--light);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            margin-left: 10px;
+        }
+        
+        .product-stock.low {
+            background-color: #fff5f5;
+            color: var(--warning);
+        }
+        
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: var(--accent);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: #004494;
+        }
+        
+        /* Product Details */
+        .product-details {
+            display: none;
+            padding: 60px 0;
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 1rem;
+            cursor: pointer;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+            padding: 10px 0;
+        }
+        
+        .back-btn i {
+            margin-right: 8px;
+        }
+        
+        .product-details-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+        }
+        
+        .product-gallery {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .media-container {
+            height: 400px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .main-image {
+            width: 100%;
+            height: 100%;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+        
+        .thumbnails {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .thumbnail {
+            width: 70px;
+            height: 70px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            border-radius: 4px;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            background-color: #f9f9f9;
+            border: 1px solid var(--border);
+        }
+        
+        .thumbnail.active {
+            opacity: 1;
+            border: 2px solid var(--accent);
+        }
+        
+        .color-options {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .color-option {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        
+        .color-option.active {
+            border-color: var(--accent);
+        }
+        
+        .product-details-info h2 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .product-sales {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .sales-count {
+            margin-right: 15px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .stars {
+            color: #f6ad55;
+        }
+        
+        .product-price-large {
+            font-size: 2.2rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 20px;
+        }
+        
+        .stock-info {
+            margin-bottom: 25px;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        
+        .product-description {
+            margin-bottom: 30px;
+            color: var(--text);
+            line-height: 1.7;
+        }
+        
+        /* Size and Type Selectors for Quadros */
+        .size-selector, .type-selector {
+            margin-bottom: 20px;
+        }
+        
+        .size-selector h3, .type-selector h3 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .size-options, .type-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .size-option, .type-option {
+            padding: 10px 15px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .size-option:hover, .type-option:hover {
+            border-color: var(--accent);
+        }
+        
+        .size-option.active, .type-option.active {
+            background-color: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+        
+        .price-info {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .price-info h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+        
+        .price-info ul {
+            padding-left: 20px;
+        }
+        
+        .price-info li {
+            margin-bottom: 5px;
+        }
+        
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            background-color: var(--light);
+            border: 1px solid var(--border);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quantity-input {
+            width: 60px;
+            height: 40px;
+            text-align: center;
+            border: 1px solid var(--border);
+            margin: 0 10px;
+            font-size: 1.1rem;
+        }
+        
+        /* Social Proof Section */
+        .social-proof {
+            padding: 60px 0;
+            background-color: var(--light);
+        }
+        
+        .proof-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .proof-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .proof-image {
+            height: 200px;
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .proof-content {
+            padding: 20px;
+        }
+        
+        .proof-text {
+            margin-bottom: 15px;
+            font-style: italic;
+            line-height: 1.5;
+        }
+        
+        .proof-author {
+            font-weight: 600;
+            color: var(--primary);
+            text-align: right;
+        }
+        
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            width: 90%;
+            max-width: 700px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .modal-body {
+            padding: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .required {
+            color: var(--warning);
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .checkbox-group input {
+            width: auto;
+            margin-top: 5px;
+        }
+        
+        .order-summary {
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+        }
+        
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .order-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            font-size: 1.2rem;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+        
+        /* Color Selection in Modal */
+        .color-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .color-option-modal {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .color-option-modal:hover {
+            border-color: var(--accent);
+        }
+        
+        .color-option-modal input[type="radio"] {
+            margin-right: 10px;
+        }
+        
+        .color-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            width: 100%;
+        }
+        
+        .color-sample {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid transparent;
+        }
+        
+        .color-option-modal input[type="radio"]:checked + .color-label .color-sample {
+            border-color: var(--accent);
+        }
+        
+        .color-option-modal input[type="radio"]:checked + .color-label {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        /* Confirmation Page */
+        .confirmation {
+            display: none;
+            padding: 60px 0;
+        }
+        
+        .confirmation-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            max-width: 900px;
+            margin: 0 auto;
+            border: 1px solid var(--border);
+        }
+        
+        .confirmation-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .confirmation-icon {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+        
+        .confirmation-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+        
+        .order-info, .customer-info {
+            background-color: var(--light);
+            padding: 25px;
+            border-radius: 4px;
+        }
+        
+        .info-title {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .info-item {
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info-label {
+            font-weight: 500;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 50px 0 30px;
+        }
+        
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+        
+        .footer-links {
+            display: flex;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .footer-links a:hover {
+            color: white;
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.5);
+        }
+        
+        /* Loading Animation */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading-spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .product-details-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .confirmation-details {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+            
+            .main-image, .media-container {
+                height: 300px;
+            }
+            
+            .product-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .product-stock {
+                margin-left: 0;
+                margin-top: 5px;
+            }
+            
+            .color-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 46px;
+        }
+        
+        .logo-image {
+            height: 56px;
+            width: auto;
+            object-fit: contain;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: #004494);
+        }
+        
+        .logo-main {
+            font-size: 20px;
+            font-weight: 700;
+            color: #004494);
+            line-height: 1.1;
+        }
+        
+        .logo-subtitle {
+            font-size: 11px;
+            color: #004494;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            margin-top: 1px;
+        }
+    </style>
+
+
+    <style>
+        /* Footer Styles */
+        footer {
+            background: white;
+            border-top: 1px solid var(--border);
+            padding: 40px 0 20px;
+            margin-top: 40px;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .footer-logo {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .footer-logo-image {
+            height: 50px;
+            width: auto;
+            object-fit: contain;
+        }
+
+        .footer-logo-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .footer-logo-main {
+            font-size: 18px;
+            font-weight: 700;
+            color: #004494;
+            line-height: 1.1;
+        }
+
+        .footer-logo-subtitle {
+            font-size: 10px;
+            color: #004494;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+            margin-top: 2px;
+            text-transform: uppercase;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 24px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .footer-links a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+        }
+
+        .copyright {
+            color: var(--text-light);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .footer-links {
+                gap: 16px;
+            }
+            
+            .footer-links a {
+                font-size: 13px;
+            }
+            
+            .footer-logo-image {
+                height: 40px;
+            }
+            
+            .footer-logo-main {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="https://i.postimg.cc/52pn8NCt/D43662A8-8CEA-483E-A6A9-5D2C3DF4375D-4-5005-c.jpg" alt="Bazar Moçambique" class="logo-image">
+                    <div class="logo-text">
+                        <div class="logo-main">Bazar Moçambique</div>
+                        <div class="logo-subtitle">ONLINE STORE</div>
+                    </div>
+                </div>
+                <div class="cart-icon">
+                    <i class="fas fa-shopping-bag"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Products Section -->
+    <section class="products-section" id="products">
+        <div class="hero">
+            <div class="container">
+                <h1>Quadros Artísticos e Rastreadores</h1>
+                <p>Encontre a peça perfeita para decorar sua casa e tecnologia para organizar sua vida</p>
+                <div class="delivery-notice">
+                    🚚 Entrega Imediata para Maputo Cidade
+                </div>
+            </div>
+        </div>
+        
+        <div class="container">
+            <h2 class="section-title">Nossos Produtos</h2>
+            <div class="products-grid">
+                <!-- Product 1 -->
+                <div class="product-card" data-product="1">
+                    <div class="product-image" style="background-image: url('https://http2.mlstatic.com/D_NQ_NP_2X_640616-MLB52236123049_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp');"></div>
+                    <div class="product-info">
+                        <div class="product-header">
+                            <h3 class="product-title">Quadros Artísticos</h3>
+                            <div class="product-stock low">Restam 5 unidades</div>
+                        </div>
+                        <div class="product-price">A partir de 1.000,00 Mt</div>
+                        <button class="btn order-now-btn" data-product="1">Encomendar Agora</button>
+                    </div>
+                </div>
+                
+                <!-- Product 2 -->
+                <div class="product-card" data-product="2">
+                    <div class="product-image" style="background-image: url('https://i.postimg.cc/xTsq70wx/Whats-App-Image-2025-10-30-at-21-41-24.jpg');"></div>
+                    <div class="product-info">
+                        <div class="product-header">
+                            <h3 class="product-title">Smart Tag - Rastreador</h3>
+                            <div class="product-stock">Restam 14 unidades</div>
+                        </div>
+                        <div class="product-price">1.500,00 Mt</div>
+                        <button class="btn order-now-btn" data-product="2">Encomendar Agora</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Details -->
+    <section class="product-details" id="product-details">
+        <div class="container">
+            <button class="back-btn" id="back-to-products">
+                <i class="fas fa-arrow-left"></i> Voltar para produtos
+            </button>
+            <div class="product-details-content">
+                <div class="product-gallery">
+                    <div class="media-container" id="media-container">
+                        <!-- Main image will be placed here -->
+                    </div>
+                    <div class="thumbnails" id="thumbnails"></div>
+                </div>
+                <div class="product-details-info">
+                    <h2 id="detail-title">Nome do Produto</h2>
+                    <div class="product-sales">
+                        <div class="sales-count" id="sales-count">2.348 unidades vendidas</div>
+                        <div class="stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                    </div>
+                    <div class="product-price-large" id="detail-price">0,00 Mt</div>
+                    <div class="stock-info" id="detail-stock">Disponibilidade: Em stock</div>
+                    
+                    <p class="product-description" id="detail-description">Descrição do produto...</p>
+                    
+                    <!-- Size selector for Quadros -->
+                    <div id="size-selector-container" style="display: none;">
+                        <div class="size-selector">
+                            <h3>Selecione o tamanho:</h3>
+                            <div class="size-options">
+                                <div class="size-option active" data-size="A4">A4</div>
+                                <div class="size-option" data-size="A3">A3</div>
+                                <div class="size-option" data-size="A2">A2</div>
+                            </div>
+                        </div>
+                        
+                        <div class="price-info">
+                            <h4>Preços por tamanho:</h4>
+                            <ul>
+                                <li><strong>A4</strong> – 1.500mt cada | acima de 1 unidade → 1.000mt cada</li>
+                                <li><strong>A3</strong> – 2.000mt cada | na compra de 3 → 1.300mt cada</li>
+                                <li><strong>A2</strong> – 2.500mt cada | na compra de 3 → 2.000mt cada</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <!-- Type selector for Quadros -->
+                    <div id="type-selector-container" style="display: none;">
+                        <div class="type-selector">
+                            <h3>Selecione o tipo:</h3>
+                            <div class="type-options" id="type-options">
+                                <!-- Type options will be inserted here dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="quantity-selector">
+                        <button class="quantity-btn" id="decrease-qty">-</button>
+                        <input type="number" class="quantity-input" id="quantity" value="1" min="1">
+                        <button class="quantity-btn" id="increase-qty">+</button>
+                    </div>
+                    
+                    <button class="btn" id="add-to-cart">Continuar com a Encomenda</button>
+                </div>
+            </div>
+            
+            <!-- Social Proof Section (aparece apenas na página de detalhes) -->
+            <section class="social-proof" id="social-proof" style="display: none; margin-top: 80px;">
+                <h2 class="section-title" id="social-proof-title">O que nossos clientes receberam</h2>
+                <div class="proof-grid" id="proof-grid">
+                    <!-- Proof cards will be inserted here dynamically -->
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <!-- Checkout Modal -->
+    <div class="modal" id="checkout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Finalizar Encomenda</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="loading" id="loading">
+                    <div class="loading-spinner"></div>
+                    <p>Processando seu pedido...</p>
+                </div>
+                
+                <form id="order-form">
+                    <div class="order-summary" id="modal-order-summary">
+                        <!-- Order summary will be inserted here -->
+                    </div>
+                    
+                    <!-- Color Selection for Smart Tag -->
+                    <div class="form-group" id="color-selection-container" style="display: none;">
+                        <label>Selecionar Cor <span class="required">*</span></label>
+                        <div class="color-selection">
+                            <div class="color-option-modal">
+                                <input type="radio" id="color-preto" name="product_color" value="preto" checked>
+                                <label for="color-preto" class="color-label">
+                                    <span class="color-sample" style="background-color: #000000;"></span>
+                                    Preto
+                                </label>
+                            </div>
+                            <div class="color-option-modal">
+                                <input type="radio" id="color-branco" name="product_color" value="branco">
+                                <label for="color-branco" class="color-label">
+                                    <span class="color-sample" style="background-color: #ffffff; border: 1px solid #ddd;"></span>
+                                    Branco
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Nome e Apelido <span class="required">*</span></label>
+                        <input type="text" name="name" placeholder="Ex: Aida Manhiça" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Número de Chamadas <span class="required">*</span></label>
+                        <input type="text" name="phone" placeholder="Ex: 865228149" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>WhatsApp Principal <span class="required">*</span></label>
+                        <input type="tel" name="whatsapp" placeholder="Ex: 865228149" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Província <span class="required">*</span></label>
+                        <input type="text" name="province" placeholder="Ex: Maputo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Cidade <span class="required">*</span></label>
+                        <input type="text" name="city" placeholder="Ex: Maputo Cidade" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Local da Entrega <span class="required">*</span></label>
+                        <input type="text" name="address" placeholder="Ex: Bairro do Maxaquene" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Data e horário da entrega <span class="required">*</span></label>
+                        <input type="text" name="delivery_time" placeholder="Ex: 10:30, dia 05 de Março" required>
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <input type="checkbox" name="confirmation" id="confirmation-checkbox" required>
+                        <label for="confirmation-checkbox">Confirmo que estou disponível para receber na data que coloquei</label>
+                    </div>
+                    
+                    <button type="submit" class="btn">Concluir Pedido</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Page -->
+    <section class="confirmation" id="confirmation">
+        <div class="container">
+            <div class="confirmation-card">
+                <div class="confirmation-header">
+                    <div class="confirmation-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <h2>Pedido Confirmado!</h2>
+                    <p>Obrigado pela sua encomenda. Entraremos em contacto em breve.</p>
+                </div>
+                
+                <div class="confirmation-details">
+                    <div class="order-info">
+                        <h3 class="info-title">Detalhes do Pedido</h3>
+                        <div id="confirmation-order-details">
+                            <!-- Order details will be inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div class="customer-info">
+                        <h3 class="info-title">Informações de Entrega</h3>
+                        <div id="confirmation-customer-details">
+                            <!-- Customer details will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <button class="btn" id="new-order-btn">Fazer Nova Encomenda</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+        <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="https://i.postimg.cc/52pn8NCt/D43662A8-8CEA-483E-A6A9-5D2C3DF4375D-4-5005-c.jpg" alt="Bazar Moçambique" class="footer-logo-image">
+                    <div class="footer-logo-text">
+                        <div class="footer-logo-main">Bazar Moçambique</div>
+                        <div class="footer-logo-subtitle">ONLINE STORE</div>
+                    </div>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Sobre Nós</a>
+                    <a href="#">Contacto</a>
+                    <a href="#">Política de Privacidade</a>
+                </div>
+                <div class="copyright">
+                    &copy; 2024 Bazar Moçambique. Todos os direitos reservados.
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Product data
+const products = {
+    1: {
+        id: 1,
+        name: "Quadros Artísticos",
+        basePrice: 1000.00,
+        stock: 5,
+        sold: 2348,
+        description: "Quadros artísticos com mensagens inspiradoras, perfeitos para decorar qualquer ambiente. Feitos com materiais de alta qualidade e técnicas artesanais. Inclui moldura em madeira nobre.",
+        types: [
+            {
+                id: 1,
+                name: "Ele Vive",
+                image: "https://i.postimg.cc/ht51fqKK/2025-10-26-22-26-45.jpg"
+            },
+            {
+                id: 2,
+                name: "Pai Nosso",
+                image: "https://i.postimg.cc/xCrG3ykg/2025-10-26-22-26-52.jpg"
+            },
+            {
+                id: 3,
+                name: "Jesus Me Salvou",
+                image: "https://i.postimg.cc/0QgG0d6V/2025-10-26-22-26-56.jpg"
+            },
+            {
+                id: 4,
+                name: "Jesus Cristo",
+                image: "https://i.postimg.cc/zGcFV1qr/2025-10-26-22-27-10.jpg"
+            },
+            {
+                id: 5,
+                name: "Foco",
+                image: "https://http2.mlstatic.com/D_NQ_NP_2X_813738-MLB52235990771_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp"
+            },
+            {
+                id: 6,
+                name: "Disciplina",
+                image: "https://http2.mlstatic.com/D_NQ_NP_2X_703972-MLB52236099226_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp"
+            },
+            {
+                id: 7,
+                name: "Execução",
+                image: "https://http2.mlstatic.com/D_NQ_NP_2X_671812-MLB52236103184_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp"
+            },
+            {
+                id: 8,
+                name: "Yeshua",
+                image: "https://i.postimg.cc/q7Brdn28/Whats-App-Image-2025-10-30-at-21-42-26.jpg"
+            },
+            {
+                id: 9,
+                name: "Paz",
+                image: "https://i.postimg.cc/1tzjvrDm/Whats-App-Image-2025-10-30-at-21-42-16.jpg"
+            },
+            {
+                id: 10,
+                name: "Fé",
+                image: "https://i.postimg.cc/6q21X6HT/Whats-App-Image-2025-10-30-at-21-42-23.jpg"
+            },
+            {
+                id: 11,
+                name: "Coroado",
+                image: "https://i.postimg.cc/Dz6NQMJq/Whats-App-Image-2025-10-30-at-21-42-13.jpg"
+            },
+            {
+                id: 12,
+                name: "Cruz + Leão",
+                image: "https://i.postimg.cc/W3ffCq7T/Whats-App-Image-2025-10-30-at-21-42-19.jpg"
+            },
+            {
+                id: 13,
+                name: "Cruz",
+                image: "https://i.postimg.cc/9MNNKwB5/Whats-App-Image-2025-10-30-at-21-42-23-1.jpg"
+            }
+        ],
+        previewImages: [
+            "https://http2.mlstatic.com/D_NQ_NP_2X_640616-MLB52236123049_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+            "https://i.postimg.cc/66VxsBXy/2025-10-26-23-58-15.jpg"
+        ],
+        sizes: {
+            "A4": {
+                price: 1500.00,
+                discountPrice: 1000.00,
+                discountQuantity: 2,
+                images: [
+                    "https://i.postimg.cc/ht51fqKK/2025-10-26-22-26-45.jpg",
+                    "https://i.postimg.cc/xCrG3ykg/2025-10-26-22-26-52.jpg",
+                    "https://i.postimg.cc/0QgG0d6V/2025-10-26-22-26-56.jpg",
+                    "https://i.postimg.cc/zGcFV1qr/2025-10-26-22-27-10.jpg",
+                    "https://http2.mlstatic.com/D_NQ_NP_2X_813738-MLB52235990771_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+                    "https://http2.mlstatic.com/D_NQ_NP_2X_703972-MLB52236099226_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+                    "https://http2.mlstatic.com/D_NQ_NP_2X_671812-MLB52236103184_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+                    "https://i.postimg.cc/q7Brdn28/Whats-App-Image-2025-10-30-at-21-42-26.jpg",
+                    "https://i.postimg.cc/1tzjvrDm/Whats-App-Image-2025-10-30-at-21-42-16.jpg",
+                    "https://i.postimg.cc/6q21X6HT/Whats-App-Image-2025-10-30-at-21-42-23.jpg",
+                    "https://i.postimg.cc/Dz6NQMJq/Whats-App-Image-2025-10-30-at-21-42-13.jpg",
+                    "https://i.postimg.cc/W3ffCq7T/Whats-App-Image-2025-10-30-at-21-42-19.jpg",
+                    "https://i.postimg.cc/9MNNKwB5/Whats-App-Image-2025-10-30-at-21-42-23-1.jpg"
+                ]
+            },
+            "A3": {
+                price: 2000.00,
+                discountPrice: 1300.00,
+                discountQuantity: 3,
+                images: [
+                    "https://i.postimg.cc/ht51fqKK/2025-10-26-22-26-45.jpg",
+                    "https://i.postimg.cc/xCrG3ykg/2025-10-26-22-26-52.jpg",
+                    "https://i.postimg.cc/0QgG0d6V/2025-10-26-22-26-56.jpg",
+                    "https://i.postimg.cc/zGcFV1qr/2025-10-26-22-27-10.jpg",
+                    "https://http2.mlstatic.com/D_NQ_NP_2X_813738-MLB52235990771_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+                    "https://http2.mlstatic.com/D_NQ_NP_2X_703972-MLB52236099226_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+                    "https://http2.mlstatic.com/D_NQ_NP_2X_671812-MLB52236103184_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+                    "https://i.postimg.cc/q7Brdn28/Whats-App-Image-2025-10-30-at-21-42-26.jpg",
+                    "https://i.postimg.cc/1tzjvrDm/Whats-App-Image-2025-10-30-at-21-42-16.jpg",
+                    "https://i.postimg.cc/6q21X6HT/Whats-App-Image-2025-10-30-at-21-42-23.jpg",
+                    "https://i.postimg.cc/Dz6NQMJq/Whats-App-Image-2025-10-30-at-21-42-13.jpg",
+                    "https://i.postimg.cc/W3ffCq7T/Whats-App-Image-2025-10-30-at-21-42-19.jpg",
+                    "https://i.postimg.cc/9MNNKwB5/Whats-App-Image-2025-10-30-at-21-42-23-1.jpg"
+                ]
+            },
+            "A2": {
+                price: 2500.00,
+                discountPrice: 2000.00,
+                discountQuantity: 3,
+                images: [
+                    "https://i.postimg.cc/ht51fqKK/2025-10-26-22-26-45.jpg",
+                    "https://i.postimg.cc/xCrG3ykg/2025-10-26-22-26-52.jpg",
+                    "https://i.postimg.cc/0QgG0d6V/2025-10-26-22-26-56.jpg",
+                    "https://i.postimg.cc/zGcFV1qr/2025-10-26-22-27-10.jpg",
+                    "https://http2.mlstatic.com/D_NQ_NP_2X_813738-MLB52235990771_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+                    "https://http2.mlstatic.com/D_NQ_NP_2X_703972-MLB52236099226_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+                    "https://http2.mlstatic.com/D_NQ_NP_2X_671812-MLB52236103184_112022-F-kit-3-quadros-decorativos-disciplina-foco-execuco-leo-lobo.webp",
+                    "https://i.postimg.cc/q7Brdn28/Whats-App-Image-2025-10-30-at-21-42-26.jpg",
+                    "https://i.postimg.cc/1tzjvrDm/Whats-App-Image-2025-10-30-at-21-42-16.jpg",
+                    "https://i.postimg.cc/6q21X6HT/Whats-App-Image-2025-10-30-at-21-42-23.jpg",
+                    "https://i.postimg.cc/Dz6NQMJq/Whats-App-Image-2025-10-30-at-21-42-13.jpg",
+                    "https://i.postimg.cc/W3ffCq7T/Whats-App-Image-2025-10-30-at-21-42-19.jpg",
+                    "https://i.postimg.cc/9MNNKwB5/Whats-App-Image-2025-10-30-at-21-42-23-1.jpg"
+                ]
+            }
+        },
+        hasColors: false,
+        hasSizes: true,
+        hasTypes: true,
+        socialProof: [
+            {
+                image: "https://i.postimg.cc/k56Y9P2M/2025-10-27-02-56-14.jpg",
+                text: "Chegou rápido e ficou perfeito na minha sala!",
+                author: "Carlos, Maputo"
+            },
+            {
+                image: "https://i.postimg.cc/xdJpYVX9/2025-10-27-02-56-18.jpg",
+                text: "Qualidade excelente e entrega super rápida.",
+                author: "Stelio, Nampula"
+            },
+            {
+                image: "https://i.postimg.cc/k56Y9P2J/2025-10-27-02-56-05.jpg",
+                text: "Adorei o produto, superou minhas expectativas!",
+                author: "Miguel, Beira"
+            }
+        ]
+    },
+    2: {
+        id: 2,
+        name: "Smart Tag - Rastreador",
+        price: 1500.00,
+        stock: 14,
+        sold: 1895,
+        description: "Smart Tag é um rastreador supercompacto e fácil de configurar que funciona com Apple e Android. Coloque um na chave do carro, na mochila e em outros objetos para os localizar facilmente. Resistente à água e com bateria substituível que dura mais de um ano.",
+        images: [
+            "https://i.postimg.cc/xTsq70wx/Whats-App-Image-2025-10-30-at-21-41-24.jpg",
+            "https://i.postimg.cc/BQhtyqrz/Whats-App-Image-2025-10-30-at-21-41-24-1.jpg",
+            "https://i.postimg.cc/3JLW6Ks9/Whats-App-Image-2025-10-30-at-21-41-24-2.jpg",
+            "https://i.postimg.cc/3JrdnycZ/Whats-App-Image-2025-10-30-at-21-41-25.jpg",
+            "https://i.postimg.cc/28H3JzsX/Whats-App-Image-2025-10-30-at-21-41-25-1.jpg",
+            "https://i.postimg.cc/RVCNX3DW/Whats-App-Image-2025-10-30-at-21-41-26.jpg"
+        ],
+        hasColors: true,
+        hasSizes: false,
+        hasTypes: false,
+        socialProof: [
+            {
+                image: "https://ae-pic-a1.aliexpress-media.com/kf/A9dead3a630694fb0864f5e86d25bd3d5U.jpg_960x960q75.jpg_.avif",
+                text: "Nunca mais perdi minhas chaves, funciona perfeitamente!",
+                author: "Miguel, Beira"
+            },
+            {
+                image: "https://ae-pic-a1.aliexpress-media.com/kf/Aae5940df688c4756973f98d834eb10a9U.jpg_960x960q75.jpg_.avif",
+                text: "Produto excelente, entrega rápida em Maputo!",
+                author: "joel, Maputo"
+            },
+            {
+                image: "https://ae-pic-a1.aliexpress-media.com/kf/Ad6a5f9decfba4aae936fb6fb12db3afeT.jpg_960x960q75.jpg_.avif",
+                text: "Muito prático e fácil de usar, recomendo!",
+                author: "João, Nampula"
+            }
+        ]
+    }
+};
+
+// Current state
+let currentProduct = null;
+let cart = [];
+let currentColor = "preto";
+let currentSize = "A4";
+let currentType = null;
+
+// DOM elements
+const productsSection = document.getElementById('products');
+const productDetailsSection = document.getElementById('product-details');
+const confirmationSection = document.getElementById('confirmation');
+const checkoutModal = document.getElementById('checkout-modal');
+const orderForm = document.getElementById('order-form');
+const backToProductsBtn = document.getElementById('back-to-products');
+const closeModalBtn = document.getElementById('close-modal');
+const newOrderBtn = document.getElementById('new-order-btn');
+const colorOptionsContainer = document.getElementById('color-options-container');
+const colorSelectionContainer = document.getElementById('color-selection-container');
+const sizeSelectorContainer = document.getElementById('size-selector-container');
+const typeSelectorContainer = document.getElementById('type-selector-container');
+const typeOptionsContainer = document.getElementById('type-options');
+const loadingElement = document.getElementById('loading');
+const socialProofSection = document.getElementById('social-proof');
+const proofGrid = document.getElementById('proof-grid');
+const mediaContainer = document.getElementById('media-container');
+
+// Initialize the page
+document.addEventListener('DOMContentLoaded', function() {
+    // Set initial state
+    productsSection.style.display = 'block';
+    productDetailsSection.style.display = 'none';
+    confirmationSection.style.display = 'none';
+    checkoutModal.style.display = 'none';
+    
+    // Setup event listeners
+    setupEventListeners();
+});
+
+function setupEventListeners() {
+    // Event listeners for product cards
+    document.querySelectorAll('.product-card').forEach(element => {
+        element.addEventListener('click', function(e) {
+            // Don't trigger if clicking the button
+            if (e.target.classList.contains('order-now-btn')) return;
+            
+            const productId = this.getAttribute('data-product');
+            showProductDetails(productId);
+        });
+    });
+
+    // Event listeners for order buttons
+    document.querySelectorAll('.order-now-btn').forEach(element => {
+        element.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const productId = this.getAttribute('data-product');
+            showProductDetails(productId);
+        });
+    });
+
+    // Back to products button
+    backToProductsBtn.addEventListener('click', function() {
+        productDetailsSection.style.display = 'none';
+        productsSection.style.display = 'block';
+        window.scrollTo(0, 0);
+    });
+
+    // Quantity buttons
+    document.getElementById('decrease-qty').addEventListener('click', function() {
+        const quantityInput = document.getElementById('quantity');
+        if (quantityInput.value > 1) {
+            quantityInput.value = parseInt(quantityInput.value) - 1;
+        }
+        updatePrice();
+    });
+
+    document.getElementById('increase-qty').addEventListener('click', function() {
+        const quantityInput = document.getElementById('quantity');
+        quantityInput.value = parseInt(quantityInput.value) + 1;
+        updatePrice();
+    });
+
+    // Add to cart button
+    document.getElementById('add-to-cart').addEventListener('click', function() {
+        const quantity = parseInt(document.getElementById('quantity').value);
+        addToCart(currentProduct.id, quantity, currentColor, currentSize, currentType);
+        showCheckoutModal();
+    });
+
+    // Close modal button
+    closeModalBtn.addEventListener('click', function() {
+        checkoutModal.style.display = 'none';
+    });
+
+    // New order button
+    newOrderBtn.addEventListener('click', function() {
+        confirmationSection.style.display = 'none';
+        productsSection.style.display = 'block';
+        cart = [];
+        window.scrollTo(0, 0);
+    });
+
+    // Form submission
+    orderForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        processOrder();
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(e) {
+        if (e.target === checkoutModal) {
+            checkoutModal.style.display = 'none';
+        }
+    });
+}
+
+// Show product details
+function showProductDetails(productId) {
+    currentProduct = products[productId];
+    
+    // Scroll to top
+    window.scrollTo(0, 0);
+    
+    // Update product details
+    document.getElementById('detail-title').textContent = currentProduct.name;
+    document.getElementById('sales-count').textContent = `${currentProduct.sold.toLocaleString()} unidades vendidas`;
+    document.getElementById('detail-stock').textContent = `Disponibilidade: ${currentProduct.stock > 0 ? `Restam ${currentProduct.stock} unidades` : 'Esgotado'}`;
+    document.getElementById('detail-description').textContent = currentProduct.description;
+    
+    // REMOVA ESTA LINHA - colorOptionsContainer não existe mais
+    // colorOptionsContainer.style.display = 'none';
+    
+    // Show/hide size selector
+    if (currentProduct.hasSizes) {
+        sizeSelectorContainer.style.display = 'block';
+        setupSizeOptions();
+        updatePrice();
+    } else {
+        sizeSelectorContainer.style.display = 'none';
+        document.getElementById('detail-price').textContent = formatPrice(currentProduct.price);
+    }
+    
+    // Show/hide type selector
+    if (currentProduct.hasTypes) {
+        typeSelectorContainer.style.display = 'block';
+        setupTypeOptions();
+    } else {
+        typeSelectorContainer.style.display = 'none';
+    }
+    
+    // Update social proof section
+    updateSocialProof(currentProduct);
+    
+    // Show social proof section
+    socialProofSection.style.display = 'block';
+    
+    // Show product details section
+    productsSection.style.display = 'none';
+    productDetailsSection.style.display = 'block';
+    
+    // Initialize images
+    updateProductImages();
+}
+// Setup size options for Quadros
+function setupSizeOptions() {
+    const sizeOptions = document.querySelectorAll('.size-option');
+    
+    sizeOptions.forEach(option => {
+        option.addEventListener('click', function() {
+            const size = this.getAttribute('data-size');
+            currentSize = size;
+            
+            // Update active size
+            sizeOptions.forEach(opt => opt.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update price
+            updatePrice();
+        });
+    });
+}
+
+// Setup type options for Quadros
+function setupTypeOptions() {
+    typeOptionsContainer.innerHTML = '';
+    
+    currentProduct.types.forEach((type, index) => {
+        const typeOption = document.createElement('div');
+        typeOption.className = `type-option ${index === 0 ? 'active' : ''}`;
+        typeOption.setAttribute('data-type', type.id);
+        typeOption.textContent = type.name;
+        
+        typeOption.addEventListener('click', function() {
+            const typeId = this.getAttribute('data-type');
+            currentType = typeId;
+            
+            // Update active type
+            document.querySelectorAll('.type-option').forEach(opt => {
+                opt.classList.remove('active');
+            });
+            this.classList.add('active');
+        });
+        
+        typeOptionsContainer.appendChild(typeOption);
+    });
+    
+    // Set first type as default
+    if (currentProduct.types.length > 0) {
+        currentType = currentProduct.types[0].id;
+    }
+}
+
+// Update price based on size and quantity
+function updatePrice() {
+    if (currentProduct.hasSizes) {
+        const quantity = parseInt(document.getElementById('quantity').value);
+        const sizeData = currentProduct.sizes[currentSize];
+        
+        let price = sizeData.price;
+        
+        // Apply discount if applicable
+        if (quantity >= sizeData.discountQuantity) {
+            price = sizeData.discountPrice;
+        }
+        
+        document.getElementById('detail-price').textContent = formatPrice(price);
+    }
+}
+
+// Update social proof based on product
+function updateSocialProof(product) {
+    const socialProofTitle = document.getElementById('social-proof-title');
+    socialProofTitle.textContent = `Clientes que compraram ${product.name}`;
+    
+    proofGrid.innerHTML = '';
+    
+    product.socialProof.forEach(proof => {
+        const proofCard = document.createElement('div');
+        proofCard.className = 'proof-card';
+        proofCard.innerHTML = `
+            <div class="proof-image" style="background-image: url('${proof.image}');"></div>
+            <div class="proof-content">
+                <p class="proof-text">"${proof.text}"</p>
+                <div class="proof-author">- ${proof.author}</div>
+            </div>
+        `;
+        proofGrid.appendChild(proofCard);
+    });
+}
+
+// Update product images based on product type
+function updateProductImages() {
+    const thumbnailsContainer = document.getElementById('thumbnails');
+    thumbnailsContainer.innerHTML = '';
+    mediaContainer.innerHTML = '';
+    
+    if (currentProduct.hasColors) {
+        // For Smart Tag - galeria única com todas as imagens
+        currentProduct.images.forEach((image, index) => {
+            const thumbnail = document.createElement('div');
+            thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+            thumbnail.style.backgroundImage = `url('${image}')`;
+            thumbnail.addEventListener('click', function() {
+                showImage(image);
+                
+                // Update active thumbnail
+                document.querySelectorAll('.thumbnail').forEach(thumb => {
+                    thumb.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+            
+            thumbnailsContainer.appendChild(thumbnail);
+        });
+        
+        // Show first image by default
+        showImage(currentProduct.images[0]);
+        
+    } else if (currentProduct.hasSizes) {
+        // For Quadros with sizes
+        
+        // Add preview images first
+        if (currentProduct.previewImages && currentProduct.previewImages.length > 0) {
+            currentProduct.previewImages.forEach((image, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = `thumbnail ${index === 0 ? 'active' : ''}`;
+                thumbnail.style.backgroundImage = `url('${image}')`;
+                thumbnail.addEventListener('click', function() {
+                    showImage(image);
+                    
+                    // Update active thumbnail
+                    document.querySelectorAll('.thumbnail').forEach(thumb => {
+                        thumb.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+                
+                thumbnailsContainer.appendChild(thumbnail);
+            });
+        }
+        
+        // Add thumbnails for all types
+        currentProduct.types.forEach((type, index) => {
+            const thumbnail = document.createElement('div');
+            thumbnail.className = `thumbnail`;
+            thumbnail.style.backgroundImage = `url('${type.image}')`;
+            thumbnail.addEventListener('click', function() {
+                showImage(type.image);
+                
+                // Update active thumbnail
+                document.querySelectorAll('.thumbnail').forEach(thumb => {
+                    thumb.classList.remove('active');
+                });
+                this.classList.add('active');
+                
+                // Update current type
+                currentType = type.id;
+                document.querySelectorAll('.type-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                document.querySelector(`.type-option[data-type="${type.id}"]`).classList.add('active');
+            });
+            
+            thumbnailsContainer.appendChild(thumbnail);
+        });
+        
+        // Show first preview image by default, or first type image if no previews
+        const defaultImage = currentProduct.previewImages && currentProduct.previewImages.length > 0 
+            ? currentProduct.previewImages[0] 
+            : currentProduct.types[0].image;
+        showImage(defaultImage);
+    }
+}
+
+function showImage(imageUrl) {
+    mediaContainer.innerHTML = '';
+    const mainImage = document.createElement('div');
+    mainImage.className = 'main-image';
+    mainImage.style.backgroundImage = `url('${imageUrl}')`;
+    mediaContainer.appendChild(mainImage);
+}
+
+// Add product to cart
+function addToCart(productId, quantity, color = null, size = null, type = null) {
+    const product = products[productId];
+    
+    // Calculate price and build product name
+    let price = product.price;
+    let itemName = product.name;
+    
+    if (product.hasSizes) {
+        // Apenas Quadros tem tamanho
+        const sizeData = product.sizes[size];
+        price = sizeData.price;
+        
+        // Apply discount if applicable
+        if (quantity >= sizeData.discountQuantity) {
+            price = sizeData.discountPrice;
+        }
+        
+        itemName += ` ${size}`;
+        
+        if (type && product.hasTypes) {
+            const selectedType = product.types.find(t => t.id == type);
+            if (selectedType) {
+                itemName += ` - ${selectedType.name}`;
+            }
+        }
+    }
+    
+    if (color && product.hasColors) {
+        // Apenas Smart Tag tem cor
+        itemName += ` (${color})`;
+    }
+    
+    cart.push({
+        id: productId,
+        name: itemName,
+        price: price,
+        quantity: quantity,
+        color: color,
+        size: size, // Será null para Smart Tag
+        type: type  // Será null para Smart Tag
+    });
+}
+
+// Show checkout modal
+function showCheckoutModal() {
+    // Scroll to top
+    window.scrollTo(0, 0);
+    
+    // Determine if it's Smart Tag (product with colors)
+    const isSmartTag = cart.some(item => item.id === 2);
+    
+    // Show/hide color selection (agora só no modal)
+    if (isSmartTag) {
+        colorSelectionContainer.style.display = 'block';
+        // Select first color by default
+        document.getElementById('color-preto').checked = true;
+    } else {
+        colorSelectionContainer.style.display = 'none';
+    }
+    
+    // Update order summary
+    const orderSummary = document.getElementById('modal-order-summary');
+    orderSummary.innerHTML = '';
+    
+    let subtotal = 0;
+    
+    cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+        
+        const orderItem = document.createElement('div');
+        orderItem.className = 'order-item';
+        orderItem.innerHTML = `
+            <div>${item.name} x${item.quantity}</div>
+            <div>${formatPrice(itemTotal)}</div>
+        `;
+        
+        orderSummary.appendChild(orderItem);
+    });
+    
+    const totalElement = document.createElement('div');
+    totalElement.className = 'order-total';
+    totalElement.innerHTML = `
+        <div>Total</div>
+        <div>${formatPrice(subtotal)}</div>
+    `;
+    
+    orderSummary.appendChild(totalElement);
+    
+    // Show modal
+    checkoutModal.style.display = 'block';
+}
+
+// Process order
+function processOrder() {
+    console.log('🚀 Iniciando processamento do pedido...');
+    
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('order-form').style.display = 'none';
+    
+    const formData = new FormData(orderForm);
+    
+    // Get selected color from modal (apenas para Smart Tag)
+    const colorInput = document.querySelector('input[name="product_color"]:checked');
+    const selectedColor = colorInput ? colorInput.value : null;
+    
+    // Prepare order data for backend
+    const orderData = {
+        customer: {
+            name: formData.get('name'),
+            phone: formData.get('phone'),
+            whatsapp: formData.get('whatsapp'),
+            province: formData.get('province'),
+            city: formData.get('city'),
+            address: formData.get('address'),
+            deliveryTime: formData.get('delivery_time')
+        },
+        items: cart.map(item => {
+            // Para Smart Tag, usar cor do modal; para Quadros, não enviar cor
+            const finalColor = (item.id === 2 && selectedColor) ? selectedColor : null;
+            
+            // Para Quadros, enviar tamanho e tipo; para Smart Tag, não enviar
+            const finalSize = item.id === 1 ? item.size : null;
+            const finalType = item.id === 1 ? item.type : null;
+            
+            return {
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                color: finalColor,
+                size: finalSize,
+                type: finalType
+            };
+        })
+    };
+    
+    console.log('📤 Dados enviados:', orderData);
+    
+    // FAZER REQUISIÇÃO COM DEBUG COMPLETO
+    fetch('processar_pedido.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(orderData)
+    })
+    .then(response => {
+        console.log('📥 Status da resposta:', response.status);
+        console.log('📥 Headers:', Object.fromEntries(response.headers.entries()));
+        
+        // Verificar o tipo de conteúdo
+        const contentType = response.headers.get('content-type');
+        console.log('📥 Content-Type:', contentType);
+        
+        if (contentType && contentType.includes('application/json')) {
+            return response.json().then(data => {
+                console.log('✅ Resposta JSON:', data);
+                return { isJson: true, data: data };
+            });
+        } else {
+            return response.text().then(text => {
+                console.log('❌ Resposta NÃO é JSON. Conteúdo:', text.substring(0, 200));
+                return { isJson: false, text: text };
+            });
+        }
+    })
+    .then(result => {
+        if (result.isJson) {
+            if (result.data.success) {
+                console.log('🎉 Pedido salvo no banco! ID:', result.data.order_id);
+                saveOrderToLocalStorage(orderData, result.data.order_id);
+                showConfirmation(orderData, result.data.order_id);
+            } else {
+                throw new Error('Erro do servidor: ' + result.data.message);
+            }
+        } else {
+            // Analisar o HTML retornado para encontrar o erro
+            const errorMatch = result.text.match(/<b>(.*?)<\/b>/);
+            const errorMessage = errorMatch ? errorMatch[1] : 'Erro desconhecido no PHP';
+            throw new Error('PHP Error: ' + errorMessage);
+        }
+    })
+    .catch(error => {
+        console.error('💥 Erro completo:', error);
+        
+        // Fallback para localStorage
+        saveOrderToLocalStorage(orderData);
+        showConfirmation(orderData);
+        
+        alert('Pedido salvo localmente. Erro: ' + error.message);
+    })
+    .finally(() => {
+        console.log('🏁 Processamento finalizado');
+        cart = [];
+        checkoutModal.style.display = 'none';
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('order-form').style.display = 'block';
+    });
+}
+
+// Function to save to localStorage as fallback
+function saveOrderToLocalStorage(orderData, orderId = null) {
+    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+    const orderToSave = {
+        ...orderData,
+        order_id: orderId || 'LOCAL_' + Date.now(),
+        date: new Date().toISOString()
+    };
+    orders.push(orderToSave);
+    localStorage.setItem('orders', JSON.stringify(orders));
+}
+
+// Show confirmation page
+function showConfirmation(orderData, orderId = null) {
+    // Scroll to top
+    window.scrollTo(0, 0);
+    
+    // Update order details
+    const orderDetails = document.getElementById('confirmation-order-details');
+    orderDetails.innerHTML = '';
+    
+    let subtotal = 0;
+    
+    orderData.items.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        subtotal += itemTotal;
+        
+        const infoItem = document.createElement('div');
+        infoItem.className = 'info-item';
+        infoItem.innerHTML = `
+            <span class="info-label">${item.name} x${item.quantity}</span>
+            <span>${formatPrice(itemTotal)}</span>
+        `;
+        
+        orderDetails.appendChild(infoItem);
+    });
+    
+    const totalItem = document.createElement('div');
+    totalItem.className = 'info-item';
+    totalItem.innerHTML = `
+        <span class="info-label">Total</span>
+        <span>${formatPrice(subtotal)}</span>
+    `;
+    
+    orderDetails.appendChild(totalItem);
+    
+    // Update customer details
+    const customerDetails = document.getElementById('confirmation-customer-details');
+    customerDetails.innerHTML = '';
+    
+    const customerFields = [
+        { label: 'Nome', value: orderData.customer.name },
+        { label: 'Telefone', value: orderData.customer.phone },
+        { label: 'WhatsApp', value: orderData.customer.whatsapp },
+        { label: 'Província', value: orderData.customer.province },
+        { label: 'Cidade', value: orderData.customer.city },
+        { label: 'Endereço', value: orderData.customer.address },
+        { label: 'Data/Horário de Entrega', value: orderData.customer.deliveryTime }
+    ];
+    
+    customerFields.forEach(field => {
+        const infoItem = document.createElement('div');
+        infoItem.className = 'info-item';
+        infoItem.innerHTML = `
+            <span class="info-label">${field.label}</span>
+            <span>${field.value}</span>
+        `;
+        
+        customerDetails.appendChild(infoItem);
+    });
+    
+    // Show confirmation section
+    productsSection.style.display = 'none';
+    productDetailsSection.style.display = 'none';
+    confirmationSection.style.display = 'block';
+}
+
+// Format price
+function formatPrice(price) {
+    return new Intl.NumberFormat('pt-MZ', {
+        minimumFractionDigits: 2
+    }).format(price) + ' Mt';
+}
+    </script>
+</body>
+</html>

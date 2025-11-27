@@ -17,12 +17,6 @@ import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { placeholderProducts } from '@/lib/placeholder-products';
 import placeholderImages from '@/lib/placeholder-images.json';
 
-// Definindo um tipo mais explícito para as props da página
-type PageProps = {
-  params: { id: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
 async function getProduct(id: string): Promise<Product | null> {
   try {
     const docRef = doc(firestore, 'products', id);
@@ -40,7 +34,7 @@ async function getProduct(id: string): Promise<Product | null> {
   return placeholderProduct || null;
 }
 
-export default async function ProductDetailPage({ params }: PageProps) {
+export default async function ProductDetailPage({ params }: { params: { id: string } }) {
   const product = await getProduct(params.id);
 
   if (!product) {

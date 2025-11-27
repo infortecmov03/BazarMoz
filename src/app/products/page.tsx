@@ -17,12 +17,9 @@ import { AddToCartButton } from '@/components/cart/AddToCartButton';
 import { placeholderProducts } from '@/lib/placeholder-products';
 import placeholderImages from '@/lib/placeholder-images.json';
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
-
+// --------------------------
+// GET PRODUCT FUNCTION
+// --------------------------
 async function getProduct(id: string): Promise<Product | null> {
   try {
     const docRef = doc(firestore, 'products', id);
@@ -35,12 +32,18 @@ async function getProduct(id: string): Promise<Product | null> {
     console.error("Error fetching product from Firestore:", error);
   }
 
-  // Fallback to placeholder data if not found in Firestore or if there's an error
   const placeholderProduct = placeholderProducts.find(p => p.id === id);
   return placeholderProduct || null;
 }
 
-export default async function ProductDetailPage({ params }: PageProps) {
+// --------------------------
+// PAGE COMPONENT
+// --------------------------
+export default async function ProductDetailPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const product = await getProduct(params.id);
 
   if (!product) {
@@ -51,9 +54,11 @@ export default async function ProductDetailPage({ params }: PageProps) {
     ...(product.images || []),
     ...(product.previewImages || []),
   ];
-  
+
   if (allImages.length === 0) {
-    allImages.push(placeholderImages.productFallback.src.replace('{id}', product.id));
+    allImages.push(
+      placeholderImages.productFallback.src.replace('{id}', product.id)
+    );
   }
 
   return (
@@ -84,6 +89,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             )}
           </Carousel>
         </div>
+
         <div>
           <Card>
             <CardHeader>
@@ -92,43 +98,51 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-4 mb-4">
-                 {product.isOnSale && <Badge>Promoção</Badge>}
-                 {product.isFeatured && <Badge variant="secondary">Destaque</Badge>}
-                 {product.stock <= 0 && <Badge variant="destructive">Esgotado</Badge>}
+                {product.isOnSale && <Badge>Promoção</Badge>}
+                {product.isFeatured && <Badge variant="secondary">Destaque</Badge>}
+                {product.stock <= 0 && <Badge variant="destructive">Esgotado</Badge>}
               </div>
+
               <p className="text-4xl font-bold mb-6">
-                {new Intl.NumberFormat('pt-PT', { style: 'currency', currency: 'MZN' }).format(product.price)}
+                {new Intl.NumberFormat('pt-PT', {
+                  style: 'currency',
+                  currency: 'MZN',
+                }).format(product.price)}
               </p>
-              
+
               <div className="flex items-center gap-4">
                 <AddToCartButton product={product} />
-                 <p className="text-sm text-muted-foreground">{product.stock} em stock</p>
+                <p className="text-sm text-muted-foreground">{product.stock} em stock</p>
               </div>
 
-               <Separator className="my-6" />
+              <Separator className="my-6" />
 
-               {product.socialProof && product.socialProof.length > 0 && (
-                 <div>
-                    <h3 className="text-lg font-semibold mb-4">O que os clientes dizem</h3>
-                    <div className="space-y-4">
-                      {product.socialProof.slice(0, 2).map((proof, index) => (
-                        <div key={index} className="flex items-start gap-4 p-4 bg-muted/50 rounded-lg">
-                           <Image 
-                              src={proof.image.replace('{seed}', `avatar${index+1}`)} 
-                              alt={proof.author} 
-                              width={40} height={40} 
-                              className="rounded-full object-cover" 
-                              data-ai-hint={placeholderImages.avatar.hint}
-                            />
-                           <div>
-                              <p className="text-sm italic">"{proof.text}"</p>
-                              <p className="text-xs text-muted-foreground mt-1">- {proof.author}</p>
-                           </div>
+              {product.socialProof && product.socialProof.length > 0 && (
+                <div>
+                  <h3 className="text-lg font-semibold mb-4">O que os clientes dizem</h3>
+                  <div className="space-y-4">
+                    {product.socialProof.slice(0, 2).map((proof, index) => (
+                      <div
+                        key={index}
+                        className="flex items-start gap-4 p-4 bg-muted/50 rounded-lg"
+                      >
+                        <Image
+                          src={proof.image.replace('{seed}', `avatar${index + 1}`)}
+                          alt={proof.author}
+                          width={40}
+                          height={40}
+                          className="rounded-full object-cover"
+                          data-ai-hint={placeholderImages.avatar.hint}
+                        />
+                        <div>
+                          <p className="text-sm italic">"{proof.text}"</p>
+                          <p className="text-xs text-muted-foreground mt-1">- {proof.author}</p>
                         </div>
-                      ))}
-                    </div>
-                 </div>
-               )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

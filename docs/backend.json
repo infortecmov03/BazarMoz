@@ -1,0 +1,261 @@
+{
+  "entities": {
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a product in the Bazar Moçambique e-commerce store.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the product."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the product."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the product."
+        },
+        "images": {
+          "type": "array",
+          "description": "URLs of the product images.",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "price": {
+          "type": "number",
+          "description": "Price of the product."
+        },
+        "stock": {
+          "type": "number",
+          "description": "Available stock quantity."
+        },
+        "isFeatured": {
+          "type": "boolean",
+          "description": "Indicates if the product is featured on the homepage."
+        },
+        "isOnSale": {
+          "type": "boolean",
+          "description": "Indicates if the product is currently on sale."
+        },
+        "socialProof": {
+          "type": "array",
+          "description": "Customer testimonials or social proof.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "image": {
+                "type": "string",
+                "format": "uri"
+              },
+              "text": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              }
+            },
+            "required": ["image", "text", "author"]
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "images",
+        "price",
+        "stock"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the Bazar Moçambique e-commerce store.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user. This is likely the Firebase UID."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "Phone number of the user."
+        },
+        "isAnonymous": {
+          "type": "boolean",
+          "description": "Indicates if the user is an anonymous user."
+        },
+        "emailVerified": {
+          "type": "boolean",
+          "description": "Indicates if the user's email is verified."
+        }
+      },
+      "required": [
+        "id",
+        "isAnonymous"
+      ]
+    },
+    "Order": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Order",
+      "type": "object",
+      "description": "Represents an order placed in the Bazar Moçambique e-commerce store.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the order. This could be a Firestore document ID."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User who placed the order. (Relationship: User 1:N Order)"
+        },
+        "orderDate": {
+          "type": "string",
+          "description": "Date and time when the order was placed.",
+          "format": "date-time"
+        },
+        "items": {
+          "type": "array",
+          "description": "A list of product IDs and quantities in the order.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "Total amount of the order."
+        },
+        "status": {
+          "type": "string",
+          "description": "Status of the order (e.g., pending, processing, shipped, delivered)."
+        },
+        "customerDetails": {
+          "type": "string",
+          "description": "Stringified JSON of Customer details (name, address, phone)"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "orderDate",
+        "items",
+        "totalAmount",
+        "status",
+        "customerDetails"
+      ]
+    },
+    "CartItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "CartItem",
+      "type": "object",
+      "description": "Represents an item in the shopping cart.",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "description": "Reference to the Product in the cart. (Relationship: Product 1:N CartItem)"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Quantity of the product in the cart."
+        }
+      },
+      "required": [
+        "productId",
+        "quantity"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Path-based ownership ensures only the authenticated user can access their profile.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Stores product information.  This collection can be listed securely with rules that filter based on ownership or other criteria without exposing sensitive data.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "The unique identifier for the product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/orders/{orderId}",
+        "definition": {
+          "entityName": "Order",
+          "schema": {
+            "$ref": "#/backend/entities/Order"
+          },
+          "description": "Stores order information within the user's document. Path-based ownership ensures only the user who created the order can access it.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase UID of the user who placed the order."
+            },
+            {
+              "name": "orderId",
+              "description": "The unique identifier for the order."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/cart/{cartItemId}",
+        "definition": {
+          "entityName": "CartItem",
+          "schema": {
+            "$ref": "#/backend/entities/CartItem"
+          },
+          "description": "Stores cart items for each user. Path-based ownership ensures only an authenticated user can access their own cart data.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase UID of the user."
+            },
+            {
+              "name": "cartItemId",
+              "description": "The unique identifier for the cart item."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to support Bazar Moçambique's e-commerce application, focusing on user authentication, product catalog, shopping cart, and order processing. The structure prioritizes security, scalability, and ease of debugging. Authorization independence is achieved through path-based ownership for user-specific data and the avoidance of `get()` calls in security rules.\n\n*   **Users Collection:** `/users/{userId}` stores user profiles, leveraging path-based ownership for private user data, ensuring only the authenticated user can access their own profile. This pattern allows for simple and secure security rules based on `request.auth.uid`.\n*   **Products Collection:** `/products/{productId}` stores product information. This collection uses a flat structure, allowing easy listing of all products without complex security constraints. Security rules can be applied to control who can create, read, update, or delete product entries (e.g., only administrators).\n*   **Orders Collection:** `/users/{userId}/orders/{orderId}` stores order information within the user's document.  Path-based ownership ensures that only the user who created the order can access it, making security rules straightforward. Denormalizing user-specific order data into user-specific collections avoids the need for complex queries and ensures data privacy.\n*   **Cart Items Collection:** `/users/{userId}/cart/{cartItemId}` stores cart items for each user. This design uses path-based ownership so that only an authenticated user can access their own cart data, facilitating secure and efficient management of shopping carts.\n\nThis structure supports the required QAPs by:\n\n*   **Authorization Independence:** By using path-based ownership, security rules can rely solely on `request.auth.uid` without needing to fetch data from parent documents.\n*   **Secure Listing:** Each collection can be listed securely with rules that filter based on ownership or other criteria without exposing sensitive data.\n*   **DBAC Compliance:** User roles are implicitly managed through path-based ownership, adhering to the DBAC principle."
+  }
+}

@@ -1,0 +1,75 @@
+{
+  "productCard": {
+    "src": "https://picsum.photos/seed/{id}/400/300",
+    "hint": "product image"
+  },
+  "productFallback": {
+    "src": "https://picsum.photos/seed/{id}/600/600",
+    "hint": "product image"
+  },
+  "cartItem": {
+    "src": "https://picsum.photos/seed/{id}/100/100",
+    "hint": "product thumbnail"
+  },
+  "avatar": {
+    "src": "https://picsum.photos/seed/{seed}/40/40",
+    "hint": "person avatar"
+  },
+  "capulana": {
+    "images": [
+      "https://picsum.photos/seed/capulana1/600/600",
+      "https://picsum.photos/seed/capulana2/600/600",
+      "https://picsum.photos/seed/capulana3/600/600"
+    ],
+    "hint": "fabric pattern"
+  },
+  "escultura": {
+    "images": [
+      "https://picsum.photos/seed/makonde1/600/600",
+      "https://picsum.photos/seed/makonde2/600/600"
+    ],
+    "hint": "wood sculpture"
+  },
+  "geleia": {
+    "images": [
+      "https://picsum.photos/seed/geleia1/600/600",
+      "https://picsum.photos/seed/geleia2/600/600"
+    ],
+    "hint": "jam jar"
+  },
+  "cafe": {
+    "images": [
+      "https://picsum.photos/seed/cafe1/600/600",
+      "https://picsum.photos/seed/cafe2/600/600",
+      "https://picsum.photos/seed/cafe3/600/600"
+    ],
+    "hint": "coffee beans"
+  },
+  "sandalias": {
+    "images": [
+      "https://picsum.photos/seed/sandalias1/600/600",
+      "https://picsum.photos/seed/sandalias2/600/600"
+    ],
+    "hint": "leather sandals"
+  },
+  "chapeu": {
+    "images": [
+      "https://picsum.photos/seed/chapeu1/600/600"
+    ],
+    "hint": "straw hat"
+  },
+  "colar": {
+    "images": [
+      "https://picsum.photos/seed/colar1/600/600",
+      "https://picsum.photos/seed/colar2/600/600",
+      "https://picsum.photos/seed/colar3/600/600"
+    ],
+    "hint": "beaded necklace"
+  },
+  "piripiri": {
+    "images": [
+      "https://picsum.photos/seed/piripiri1/600/600"
+    ],
+    "hint": "hot sauce"
+  }
+}

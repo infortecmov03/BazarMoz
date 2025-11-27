@@ -1,0 +1,152 @@
+/**
+ * This ruleset enforces a strict user-ownership model for a Bazar Moçambique e-commerce application.
+ *
+ * Core Philosophy:
+ * The security model is centered around the authenticated user. All user-specific data, such as
+ * personal profiles, orders, and shopping carts, is private and can only be accessed by the user who owns it.
+ * In contrast, general application data like the product catalog is publicly readable by anyone.
+ *
+ * Data Structure:
+ * Data is organized into a top-level public collection for products and a top-level collection for users.
+ * All sensitive, user-specific data (`orders`, `cart`) is nested within a user's document
+ * (e.g., `/users/{userId}/orders/{orderId}`), which simplifies security by leveraging path-based ownership.
+ *
+ * Key Security Decisions:
+ * - User Isolation: A user can only access data under their own `/users/{userId}` path. They cannot read,
+ *   list, or modify any other user's data.
+ * - Public Product Catalog: The `/products` collection is publicly readable to allow all visitors to browse items.
+ *   Writes to this collection are currently disabled pending the implementation of an admin role system.
+ * - No User Listing: It is not possible to list all documents in the `/users` collection, protecting user privacy.
+ * - Ownership Integrity: For user-specific subcollections like 'orders', the rules enforce that any
+ *   document created must contain a `userId` field that matches the authenticated user, ensuring a
+ *   permanent and immutable link to the owner.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --------------------------------------------------------------------
+    // Helper Functions
+    // --------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the requesting user's UID matches the document's owner ID from the path.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks for ownership on an existing document. Used for safe updates and deletes.
+     * Denies requests that target non-existent documents.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Validates required fields when creating a new user document.
+     * Ensures the document's internal `id` matches the user's auth UID.
+     */
+    function isNewUserDocValid(userId) {
+      return isOwner(userId) && request.resource.data.id == userId;
+    }
+
+    /**
+     * Validates fields on user document update.
+     * Ensures the internal `id` field remains unchanged.
+     */
+    function isUpdatedUserDocValid() {
+      return request.resource.data.id == resource.data.id;
+    }
+
+    /**
+     * Validates required fields when creating a new order.
+     * Ensures the order's internal `userId` points to the creator.
+     */
+    function isNewOrderValid(userId) {
+      return isOwner(userId) && request.resource.data.userId == userId;
+    }
+
+    /**
+     * Validates fields on order update.
+     * Ensures the `userId` linking the order to the user is immutable.
+     */
+    function isUpdatedOrderValid() {
+      return request.resource.data.userId == resource.data.userId;
+    }
+
+    // --------------------------------------------------------------------
+    // Collection Rules
+    // --------------------------------------------------------------------
+
+    /**
+     * @description Manages user profile documents.
+     * @path /users/{userId}
+     * @allow (create) A new user creating their own profile document: `auth.uid == userId`.
+     * @deny (get) An authenticated user trying to read another user's profile.
+     * @principle Restricts access to a user's own data tree and allows self-creation of a profile.
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isNewUserDocValid(userId);
+      allow update: if isExistingOwner(userId) && isUpdatedUserDocValid();
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Stores product information for the e-commerce store.
+     * @path /products/{productId}
+     * @allow (get, list) Any user, including unauthenticated visitors, can read product data.
+     * @deny (create, update, delete) Any user trying to modify the product catalog.
+     * @principle Provides public read access for a catalog but locks down writes until an admin system is defined.
+     */
+    match /products/{productId} {
+      allow get: if true;
+      allow list: if true;
+      // CRITICAL: Cannot implement owner-only or admin-only writes. The 'Product' entity is missing an 'ownerId', 'authorId', or 'admin' role field.
+      // Writes are disabled until the schema is updated to support an authorization check.
+      allow create: if false; // TODO: Add owner/admin validation once the schema is updated.
+      allow update: if false; // TODO: Add owner/admin validation once the schema is updated.
+      allow delete: if false; // TODO: Add owner/admin validation once the schema is updated.
+    }
+
+    /**
+     * @description Stores order information for a specific user.
+     * @path /users/{userId}/orders/{orderId}
+     * @allow (create) An authenticated user creating an order in their own subcollection.
+     * @deny (list) An authenticated user trying to list orders belonging to another user.
+     * @principle Enforces document ownership via path and validates relational integrity on write.
+     */
+    match /users/{userId}/orders/{orderId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isNewOrderValid(userId);
+      allow update: if isExistingOwner(userId) && isUpdatedOrderValid();
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Stores shopping cart items for a specific user.
+     * @path /users/{userId}/cart/{cartItemId}
+     * @allow (create, delete) An authenticated user adding or removing items from their own cart.
+     * @deny (update) An authenticated user trying to modify another user's cart.
+     * @principle Enforces strict document ownership based on the user's path.
+     */
+    match /users/{userId}/cart/{cartItemId} {
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+  }
+}

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, type ReactNode } from 'react';
 import { FirebaseProvider } from '@/firebase/provider';
 import { FirebaseApp, getApps, getApp, initializeApp } from 'firebase/app';
-import { Auth, getAuth } from 'firebase/auth';
+import { Auth, getAuth, signInAnonymously } from 'firebase/auth';
 import { Firestore, getFirestore } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
 import { firebaseConfig } from './config';
@@ -60,6 +60,13 @@ export function FirebaseClientProvider({ children }: FirebaseClientProviderProps
     const services = initializeFirebaseClient();
     if (services) {
       setFirebaseServices(services);
+      
+      // If there's no current user, sign in anonymously
+      if (!services.auth.currentUser) {
+        signInAnonymously(services.auth).catch(error => {
+          console.error("Anonymous sign-in failed:", error);
+        });
+      }
     }
     setIsLoading(false);
   }, []); // Empty dependency array ensures this runs only once on mount

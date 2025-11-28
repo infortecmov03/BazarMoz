@@ -53,7 +53,15 @@ export const initialProducts: Product[] = [
     imageUrl: 'https://http2.mlstatic.com/D_NQ_NP_909774-MLU75727192777_042024-O.webp',
     imageHint: 'smart tag',
     price: 950
+  },
+  {
+    id: '3',
+    name: 'T-shirt Bazar Moçambique',
+    description: 'Mostre seu apoio com nossa t-shirt de algodão de alta qualidade, com o logo da Bazar Moçambique AI.',
+    category: 'Vestuário',
+    stock: 50,
+    imageUrl: 'https://picsum.photos/seed/bazar-shirt/600/400',
+    imageHint: 'tshirt preta',
+    price: 850
   }
 ];
-
-    

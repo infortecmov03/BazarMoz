@@ -9,6 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
+import { useFirebase } from '@/firebase';
+import { collection } from 'firebase/firestore';
+import { addDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { serverTimestamp } from 'firebase/firestore';
 
 interface CheckoutModalProps {
   isOpen: boolean;
@@ -23,7 +27,8 @@ const formSchema = z.object({
 
 export function CheckoutModal({ isOpen, onOpenChange }: CheckoutModalProps) {
   const router = useRouter();
-  const { clearCart } = useCart();
+  const { cartItems, totalPrice, clearCart } = useCart();
+  const { firestore, user } = useFirebase();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -35,8 +40,24 @@ export function CheckoutModal({ isOpen, onOpenChange }: CheckoutModalProps) {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    // In a real app, you'd process the payment here.
-    console.log('Order submitted:', values);
+    const orderData = {
+      userId: user?.uid || 'anonymous',
+      ...values,
+      orderDate: serverTimestamp(),
+      totalAmount: totalPrice,
+      items: cartItems.map(item => ({
+        productId: item.id,
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      })),
+      sellerId: 'default-seller', // Placeholder until multi-seller logic is implemented
+    };
+    
+    if (firestore) {
+      const ordersCollection = collection(firestore, 'orders');
+      addDocumentNonBlocking(ordersCollection, orderData);
+    }
     
     clearCart();
     onOpenChange(false);

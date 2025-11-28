@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { CartProvider } from '@/contexts/cart-context';
 import { Toaster } from '@/components/ui/toaster';
-import { AuthProvider } from '@/firebase/auth-provider';
+import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
   title: 'Bazar Moçambique AI',
@@ -22,12 +22,12 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <AuthProvider>
+        <FirebaseClientProvider>
           <CartProvider>
             {children}
             <Toaster />
           </CartProvider>
-        </AuthProvider>
+        </FirebaseClientProvider>
       </body>
     </html>
   );

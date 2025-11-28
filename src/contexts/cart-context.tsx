@@ -1,6 +1,6 @@
 'use client';
 
-import type { Product } from '@/lib/types';
+import type { Product, ProductVariation } from '@/lib/types';
 import { createContext, useContext, useState, ReactNode, useMemo, useEffect } from 'react';
 
 interface CartItem extends Product {
@@ -9,7 +9,7 @@ interface CartItem extends Product {
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (product: Product, quantity?: number) => boolean;
+  addToCart: (product: Product | ProductVariation, quantity?: number) => boolean;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
   totalPrice: number;
@@ -37,7 +37,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('cartItems', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (product: Product, quantity = 1): boolean => {
+  const addToCart = (product: Product | ProductVariation, quantity = 1): boolean => {
     let success = false;
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
@@ -54,7 +54,14 @@ export function CartProvider({ children }: { children: ReactNode }) {
               : item
           );
         }
-        return [...prevItems, { ...product, quantity }];
+        // Ensure the full product structure is added to the cart
+        const productToAdd: Product = 'variations' in product ? product : {
+            ...product,
+            category: '', // Fill in if not present on variation
+            description: '',
+            variations: []
+        };
+        return [...prevItems, { ...productToAdd, quantity }];
       }
       
       success = false;

@@ -36,9 +36,13 @@ export function ProductCard({ product }: ProductCardProps) {
 
   const cartItem = cartItems.find(item => item.id === product.id);
   const stock = product.stock - (cartItem?.quantity || 0);
+  
+  // Use a different link for products with variations
+  const productLink = product.id.startsWith('1-') ? `/products/1` : `/products/${product.id}`;
+
 
   return (
-    <Link href={`/products/${product.id}`} className="flex h-full">
+    <Link href={productLink} className="flex h-full">
         <Card className="flex h-full w-full flex-col overflow-hidden transition-shadow duration-300 hover:shadow-xl">
         <div className="relative aspect-video">
             <Image
@@ -51,7 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
             />
         </div>
         <CardHeader>
-            <CardTitle>{product.name}</CardTitle>
+            <CardTitle className="truncate">{product.name}</CardTitle>
             <CardDescription className="line-clamp-2 min-h-[2.5rem]">{product.description}</CardDescription>
         </CardHeader>
         <CardContent className="flex-grow">

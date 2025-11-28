@@ -27,14 +27,36 @@ export function ProductShowcase({ allProducts }: ProductShowcaseProps) {
   }, [allProducts, category, priceRange]);
   
   const productsByCategory = useMemo(() => {
-    return filteredProducts.reduce((acc, product) => {
+    // For "Quadros Artisticos", show only one card that links to the family page.
+    const quadros = filteredProducts.find(p => p.category === 'Quadros Artisticos');
+    const otherProducts = filteredProducts.filter(p => p.category !== 'Quadros Artisticos');
+    
+    let displayProducts = otherProducts;
+    if (quadros && (category === 'all' || category === 'Quadros Artisticos')) {
+       // We create a representative product for the card
+        const representativeQuadro: Product = {
+            id: '1',
+            name: 'Quadros Artísticos',
+            description: 'Quadros artísticos com mensagens inspiradoras, perfeitos para decorar qualquer ambiente.',
+            price: 1000, // Base price
+            imageUrl: 'https://i.postimg.cc/ht51fqKK/2025-10-26-22-26-45.jpg',
+            category: 'Quadros Artisticos',
+            stock: 5,
+            imageHint: 'quadro artistico',
+            variations: [],
+        };
+        displayProducts = [representativeQuadro, ...otherProducts];
+    }
+
+
+    return displayProducts.reduce((acc, product) => {
         if (!acc[product.category]) {
             acc[product.category] = [];
         }
         acc[product.category].push(product);
         return acc;
     }, {} as Record<string, Product[]>);
-  }, [filteredProducts]);
+  }, [filteredProducts, category]);
 
   return (
     <div className="space-y-12">

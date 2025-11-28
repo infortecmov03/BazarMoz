@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 export type ProductVariation = {
   id: string;
   name: string;
@@ -18,4 +20,23 @@ export type Product = {
   imageUrl: string; 
   imageHint: string;
   price: number; // Base price for display
+};
+
+export type OrderItem = {
+  productId: string;
+  name: string;
+  quantity: number;
+  price: number;
+};
+
+export type Order = {
+  id: string;
+  userId: string;
+  name: string;
+  email: string;
+  address: string;
+  orderDate: Timestamp;
+  totalAmount: number;
+  items: OrderItem[];
+  sellerId: string;
 };

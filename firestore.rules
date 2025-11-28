@@ -15,7 +15,6 @@
  * - Denormalization for Security: Documents such as 'orders' and 'chatMessages' contain denormalized 'userId' and 'sellerId' fields. This is a deliberate design choice to enable fast, secure, and cost-effective authorization checks without needing extra database reads (`get` calls).
  * - Query-Based Listing: Listing all documents in the '/orders' collection is denied by default. Access is granted only through specific, secured queries where the client must filter by their own 'userId' or 'sellerId', preventing data leakage.
  * - Path-Based Chat Security: Access to chat messages is determined by the chat room's ID (e.g., '{userId}_{sellerId}'). This ensures that only the two participants can read or write to their conversation, providing strong isolation.
- * - Anonymous Auth: All users, including visitors, are authenticated anonymously. This ensures that `request.auth` is never null, simplifying rules and enhancing security.
  */
 rules_version = '2';
 service cloud.firestore {
@@ -26,7 +25,7 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
 
     /**
-     * Checks if a user is authenticated. With anonymous auth, this should always be true.
+     * Checks if a user is authenticated.
      */
     function isSignedIn() {
       return request.auth != null;
@@ -196,15 +195,16 @@ service cloud.firestore {
 
     /**
      * @description Controls access to all chats.
-     * All users are authenticated (including anonymously), so we can check if they are a participant.
      */
     match /chats/{chatId}/messages/{messageId} {
-      allow read, list: if isPrivateChatParticipant(chatId);
+      allow read, list: if isPrivateChatParticipant(chatId) || chatId == 'anonymous-chat';
       
       allow create: if (
         isPrivateChatParticipant(chatId) &&
         request.resource.data.senderType != 'ai' &&
         isOwner(request.resource.data.userId)
+      ) || (
+        chatId == 'anonymous-chat' && request.resource.data.userId == 'anonymous'
       );
       
       allow update, delete: if false;

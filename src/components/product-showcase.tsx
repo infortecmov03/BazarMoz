@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { useSearchParams } from 'next/navigation';
 import { useFirebase } from '@/firebase';
-import { collection, query, getDocs, writeBatch } from 'firebase/firestore';
+import { collection, query, getDocs, writeBatch, doc } from 'firebase/firestore';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { Skeleton } from './ui/skeleton';
 import { initialProducts } from '@/lib/products';
@@ -33,25 +33,36 @@ export function ProductShowcase() {
   // Seed database on initial load if it's empty
   useEffect(() => {
     const seedDatabase = async () => {
-      if (firestore && allProducts && allProducts.length === 0) {
-        console.log('Product collection is empty. Seeding database...');
-        const productsRef = collection(firestore, 'products');
-        const batch = writeBatch(firestore);
-        initialProducts.forEach((product) => {
-          const docRef = doc(productsRef, product.id);
-          batch.set(docRef, product);
-        });
-        await batch.commit();
-        // The useCollection hook will automatically update the UI with the new products.
-        console.log('Database seeded successfully!');
-      }
+        if (firestore) {
+            console.log('Forcing product sync from products.ts...');
+            const productsRef = collection(firestore, 'products');
+            
+            // First, delete all existing documents in the collection
+            const existingDocsSnapshot = await getDocs(productsRef);
+            if (!existingDocsSnapshot.empty) {
+                const deleteBatch = writeBatch(firestore);
+                existingDocsSnapshot.docs.forEach((doc) => {
+                    deleteBatch.delete(doc.ref);
+                });
+                await deleteBatch.commit();
+                console.log('Existing products deleted.');
+            }
+
+            // Now, add all products from initialProducts
+            const addBatch = writeBatch(firestore);
+            initialProducts.forEach((product) => {
+              const docRef = doc(productsRef, product.id);
+              addBatch.set(docRef, product);
+            });
+            await addBatch.commit();
+            console.log('Database seeded successfully from products.ts!');
+        }
     };
 
-    // We check areProductsLoading to ensure we have a definitive answer on whether products exist or not.
-    if (!areProductsLoading) {
+    if (!areProductsLoading && firestore) {
       seedDatabase();
     }
-  }, [allProducts, areProductsLoading, firestore]);
+  }, [areProductsLoading, firestore]);
   
   useEffect(() => {
     if (categoryParam) {
@@ -183,5 +194,3 @@ export function ProductShowcase() {
     </div>
   );
 }
-
-    

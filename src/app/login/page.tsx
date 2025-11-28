@@ -21,7 +21,7 @@ const formSchema = z.object({
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const { auth } = useAuth();
+  const auth = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -35,6 +35,15 @@ export default function LoginPage() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
+    if (!auth) {
+        toast({
+            variant: 'destructive',
+            title: 'Erro de configuração',
+            description: 'O serviço de autenticação não está disponível.',
+        });
+        setIsLoading(false);
+        return;
+    }
     try {
       await signInWithEmailAndPassword(auth, values.email, values.password);
       router.push('/profile');
@@ -42,7 +51,7 @@ export default function LoginPage() {
       toast({
         variant: 'destructive',
         title: 'Erro no Login',
-        description: error.message,
+        description: 'Verifique seu e-mail e senha.',
       });
     } finally {
       setIsLoading(false);

@@ -7,13 +7,13 @@ import { CartSheet } from '@/components/cart-sheet';
 import { useState } from 'react';
 import { useCart } from '@/contexts/cart-context';
 import { SearchDialog } from './search-dialog';
-import { useAuth } from '@/firebase';
+import { useUser } from '@/firebase';
 import Link from 'next/link';
 
 export function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { totalItems } = useCart();
-  const { user, isUserLoading } = useAuth();
+  const { user, isUserLoading } = useUser();
 
   return (
     <>

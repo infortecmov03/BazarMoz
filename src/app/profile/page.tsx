@@ -1,6 +1,6 @@
 'use client';
 
-import { useAuth, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { useAuth, useFirestore, useDoc, useMemoFirebase, useUser } from '@/firebase';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { doc, Timestamp } from 'firebase/firestore';
@@ -19,7 +19,8 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
-  const { user, isUserLoading, auth } = useAuth();
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
   const firestore = useFirestore();
   const router = useRouter();
   const [accountAge, setAccountAge] = useState('');
@@ -32,7 +33,7 @@ export default function ProfilePage() {
   }, [user, isUserLoading, router]);
 
   const userRef = useMemoFirebase(() => {
-    if (!user) return null;
+    if (!firestore || !user) return null;
     return doc(firestore, 'users', user.uid);
   }, [firestore, user]);
 
@@ -46,6 +47,7 @@ export default function ProfilePage() {
   }, [userProfile]);
 
   const handleLogout = async () => {
+    if (!auth) return;
     await signOut(auth);
     router.push('/');
   };

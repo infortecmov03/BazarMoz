@@ -3,7 +3,7 @@
  *
  * Core Philosophy:
  * The security model is built on three primary access patterns:
- * 1. Public Read, Owner Write: Collections like 'products' and 'sellers' are publicly browsable by anyone, but can only be modified by the authenticated seller who owns the documents.
+ * 1. Public Read, Admin Write: Collections like 'products' are publicly browsable, but can only be modified by an authenticated user with an 'admin' custom claim.
  * 2. Strict User Ownership: User-specific data, such as personal information ('/users/{userId}') and AI recommendations, is strictly confined to the authenticated user who owns it.
  * 3. Shared Access: Collaborative documents like 'orders' and 'chats' are accessible only to the specific participants involved (e.g., the buyer and the seller).
  *
@@ -11,10 +11,10 @@
  * The data is organized into several top-level collections (/users, /sellers, /products, /orders, /chats) to segregate public, private, and shared data. User- and seller-specific data is nested in subcollections (e.g., /users/{userId}/aiRecommendations) to leverage path-based security.
  *
  * Key Security Decisions:
+ * - Custom Claims for Roles: The 'admin' role is managed via Firebase Auth Custom Claims. The rule `request.auth.token.admin == true` is used to grant privileged access for product management.
  * - Denormalization for Security: Documents such as 'orders' and 'chatMessages' contain denormalized 'userId' and 'sellerId' fields. This is a deliberate design choice to enable fast, secure, and cost-effective authorization checks without needing extra database reads (`get` calls).
  * - Query-Based Listing: Listing all documents in the '/orders' collection is denied by default. Access is granted only through specific, secured queries where the client must filter by their own 'userId' or 'sellerId', preventing data leakage.
  * - Path-Based Chat Security: Access to chat messages is determined by the chat room's ID (e.g., '{userId}_{sellerId}'). This ensures that only the two participants can read or write to their conversation, providing strong isolation.
- * - Seller Identity: A "seller" is defined as an authenticated user whose UID matches the seller document ID or the `sellerId` field on related documents (like products or orders).
  */
 rules_version = '2';
 service cloud.firestore {
@@ -29,6 +29,13 @@ service cloud.firestore {
      */
     function isSignedIn() {
       return request.auth != null;
+    }
+
+    /**
+     * Checks if the user has an admin custom claim.
+     */
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.admin == true;
     }
 
     /**
@@ -142,16 +149,15 @@ service cloud.firestore {
     }
     
     /**
-     * @description Controls access to product documents. Products are public, but managed by sellers.
+     * @description Controls access to product documents. Products are public, but managed by admins.
      * @path /products/{productId}
      * @allow (list) Any user, signed in or not, can list and browse all products.
-     * @deny (delete) A user attempting to delete a product they do not own.
-     * @principle Implements a public-read, owner-write model. The 'owner' is the seller identified by the `sellerId` field.
+     * @deny (delete) A non-admin user attempting to delete a product.
+     * @principle Implements a public-read, admin-write model using custom claims.
      */
     match /products/{productId} {
       allow get, list: if true;
-      allow create: if isSignedIn() && request.resource.data.sellerId == request.auth.uid;
-      allow update, delete: if isExistingSeller(resource.data.sellerId);
+      allow create, update, delete: if isAdmin();
     }
 
     // -------------------------------------------------------------------------
@@ -206,3 +212,5 @@ service cloud.firestore {
 
   }
 }
+
+    

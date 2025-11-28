@@ -97,11 +97,11 @@ O aplicativo estará disponível em [http://localhost:9002](http://localhost:900
 
 ---
 
-## Gerenciando Produtos
-
-Agora que o aplicativo está conectado ao Firestore, você não precisa mais editar o código para gerenciar seus produtos. Você pode fazer tudo diretamente no Console do Firebase.
+## Gerenciando a Loja
 
 ### Como Adicionar um Novo Produto
+
+Agora que o aplicativo está conectado ao Firestore, você não precisa mais editar o código para gerenciar seus produtos. Você pode fazer tudo diretamente no Console do Firebase.
 
 1.  **Acesse o Console do Firebase:** Vá para o [Console do Firebase](https://console.firebase.google.com/) e selecione seu projeto.
 2.  **Vá para o Firestore:** No menu à esquerda, clique em **Construir** > **Firestore Database**.
@@ -123,6 +123,27 @@ Agora que o aplicativo está conectado ao Firestore, você não precisa mais edi
 
 6.  **Salve:** Clique em **Salvar**. Seu novo produto aparecerá no site instantaneamente!
 
+### Como Tornar um Usuário Administrador
+
+Para que as regras de segurança funcionem, um administrador precisa ter um "Custom Claim" no Firebase Authentication. Fornecemos um script para fazer isso de forma segura.
+
+1.  **Obtenha sua Chave de Conta de Serviço:**
+    *   Vá para o [Console do Firebase](https://console.firebase.google.com/).
+    *   Clique no ícone de engrenagem (Configurações do Projeto) > **Contas de Serviço**.
+    *   Selecione **Node.js** e clique em **Gerar nova chave privada**.
+    *   Um arquivo JSON será baixado. **Este arquivo é confidencial!** Não o compartilhe nem o adicione ao seu repositório Git.
+    *   Renomeie este arquivo para `serviceAccountKey.json` e coloque-o na **raiz** do seu projeto.
+
+2.  **Execute o Script:**
+    *   Abra seu terminal na pasta do projeto.
+    *   Execute o comando abaixo, substituindo `email@do.admin` pelo email do usuário que você deseja tornar administrador.
+
+    ```bash
+    npm run set-admin -- email@do.admin
+    ```
+
+    *   O script confirmará se a operação foi bem-sucedida. Agora, o usuário com esse email tem permissões de administrador para gerenciar produtos.
+
 ---
 
 ## Scripts Disponíveis
@@ -132,6 +153,7 @@ Agora que o aplicativo está conectado ao Firestore, você não precisa mais edi
 -   `npm run start`: Inicia o servidor de produção do Next.js.
 -   `npm run lint`: Executa o linter para verificar a qualidade do código.
 -   `npm run genkit:dev`: Inicia o servidor de desenvolvimento do Genkit para testar os fluxos de IA.
+-   `npm run set-admin -- <email>`: Define um usuário como administrador.
 
 ## Estrutura do Projeto
 
@@ -141,6 +163,7 @@ Agora que o aplicativo está conectado ao Firestore, você não precisa mais edi
 -   `/src/firebase`: Configuração e hooks para interagir com o Firebase.
 -   `/src/ai`: Lógica relacionada à IA, incluindo fluxos do Genkit.
 -   `/src/lib`: Funções utilitárias, definições de tipos e dados estáticos.
+-   `/scripts`: Scripts de utilidade para o projeto (ex: definir admin).
 
 ---
 

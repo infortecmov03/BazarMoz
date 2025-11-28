@@ -9,10 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Slider } from "@/components/ui/slider";
 import { useSearchParams } from 'next/navigation';
 import { useFirebase } from '@/firebase';
-import { collection, query, getDocs, writeBatch, doc } from 'firebase/firestore';
+import { collection, query } from 'firebase/firestore';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { Skeleton } from './ui/skeleton';
-import { initialProducts } from '@/lib/products';
 
 export function ProductShowcase() {
   const searchParams = useSearchParams();
@@ -29,40 +28,6 @@ export function ProductShowcase() {
   }, [firestore]);
 
   const { data: allProducts, isLoading: areProductsLoading } = useCollection<Product>(productsQuery);
-  
-  // Seed database on initial load if it's empty
-  useEffect(() => {
-    const seedDatabase = async () => {
-        if (firestore) {
-            console.log('Forcing product sync from products.ts...');
-            const productsRef = collection(firestore, 'products');
-            
-            // First, delete all existing documents in the collection
-            const existingDocsSnapshot = await getDocs(productsRef);
-            if (!existingDocsSnapshot.empty) {
-                const deleteBatch = writeBatch(firestore);
-                existingDocsSnapshot.docs.forEach((doc) => {
-                    deleteBatch.delete(doc.ref);
-                });
-                await deleteBatch.commit();
-                console.log('Existing products deleted.');
-            }
-
-            // Now, add all products from initialProducts
-            const addBatch = writeBatch(firestore);
-            initialProducts.forEach((product) => {
-              const docRef = doc(productsRef, product.id);
-              addBatch.set(docRef, product);
-            });
-            await addBatch.commit();
-            console.log('Database seeded successfully from products.ts!');
-        }
-    };
-
-    if (!areProductsLoading && firestore) {
-      seedDatabase();
-    }
-  }, [areProductsLoading, firestore]);
   
   useEffect(() => {
     if (categoryParam) {
@@ -187,7 +152,7 @@ export function ProductShowcase() {
                     </section>
                 ))
             ) : (
-                <p className="text-center text-muted-foreground">Nenhum produto encontrado com os filtros selecionados.</p>
+                <p className="text-center text-muted-foreground">Nenhum produto encontrado. Adicione produtos no console do Firebase.</p>
             )}
         </div>
       </div>

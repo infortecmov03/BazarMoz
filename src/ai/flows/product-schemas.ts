@@ -1,5 +1,3 @@
-'use server';
-
 /**
  * @fileOverview Shared Zod schemas for AI product flows.
  */

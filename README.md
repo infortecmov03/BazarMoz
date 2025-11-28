@@ -97,6 +97,34 @@ O aplicativo estará disponível em [http://localhost:9002](http://localhost:900
 
 ---
 
+## Gerenciando Produtos
+
+Agora que o aplicativo está conectado ao Firestore, você não precisa mais editar o código para gerenciar seus produtos. Você pode fazer tudo diretamente no Console do Firebase.
+
+### Como Adicionar um Novo Produto
+
+1.  **Acesse o Console do Firebase:** Vá para o [Console do Firebase](https://console.firebase.google.com/) e selecione seu projeto.
+2.  **Vá para o Firestore:** No menu à esquerda, clique em **Construir** > **Firestore Database**.
+3.  **Abra a Coleção `products`:** Você verá uma lista de suas coleções. Clique em `products` para ver todos os produtos atuais.
+4.  **Adicione um Novo Documento:** Clique em **+ Adicionar documento**.
+    *   Um painel lateral aparecerá. O Firestore pedirá um "ID do documento". Você pode clicar em **Gerar ID automaticamente** ou inserir um ID único você mesmo (ex: `caneca-01`).
+5.  **Preencha os Campos do Produto:** Agora, adicione os campos (fields) para o seu produto, um por um, certificando-se de que o tipo de dado está correto.
+
+| Campo       | Tipo   | Exemplo                                        | Descrição                                 |
+| :---------- | :----- | :--------------------------------------------- | :---------------------------------------- |
+| `id`        | string | `caneca-01`                                    | O mesmo ID único do documento.            |
+| `name`      | string | `Caneca Personalizada`                         | O nome do produto.                        |
+| `description`| string | `Caneca de cerâmica de alta qualidade.`      | A descrição que aparecerá na página.      |
+| `category`  | string | `Acessórios`                                   | Categoria para agrupar produtos.          |
+| `price`     | number | `650`                                          | O preço do produto (apenas números).      |
+| `stock`     | number | `50`                                           | Quantidade em estoque.                    |
+| `imageUrl`  | string | `https://.../sua-imagem.jpg`                  | A URL da imagem do produto.               |
+| `imageHint` | string | `caneca branca`                                | 2-3 palavras para a busca de imagem da IA. |
+
+6.  **Salve:** Clique em **Salvar**. Seu novo produto aparecerá no site instantaneamente!
+
+---
+
 ## Scripts Disponíveis
 
 -   `npm run dev`: Inicia o servidor de desenvolvimento do Next.js.

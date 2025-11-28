@@ -8,10 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { useSearchParams } from 'next/navigation';
-import { useFirebase } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
+import { useFirebase, useMemoFirebase } from '@/firebase';
+import { collection, query, getDocs, writeBatch, doc } from 'firebase/firestore';
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { Skeleton } from './ui/skeleton';
+import { initialProducts } from '@/lib/products';
 
 export function ProductShowcase() {
   const searchParams = useSearchParams();
@@ -22,12 +23,30 @@ export function ProductShowcase() {
 
   const { firestore } = useFirebase();
 
-  const productsQuery = useMemo(() => {
+  const productsCollectionRef = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'products'));
+    return collection(firestore, 'products');
   }, [firestore]);
 
-  const { data: allProducts, isLoading: areProductsLoading } = useCollection<Product>(productsQuery);
+  const { data: allProducts, isLoading: areProductsLoading, error } = useCollection<Product>(productsCollectionRef);
+
+  useEffect(() => {
+    // Seed the database if it's empty
+    const seedDatabase = async () => {
+      if (firestore && allProducts !== null && allProducts.length === 0) {
+        console.log("Product collection is empty. Seeding database...");
+        const batch = writeBatch(firestore);
+        initialProducts.forEach((product) => {
+          const docRef = doc(firestore, "products", product.id);
+          batch.set(docRef, product);
+        });
+        await batch.commit();
+        console.log("Database seeded successfully.");
+        // Note: The useCollection hook will automatically update the `allProducts` state.
+      }
+    };
+    seedDatabase();
+  }, [allProducts, firestore]);
   
   useEffect(() => {
     if (categoryParam) {

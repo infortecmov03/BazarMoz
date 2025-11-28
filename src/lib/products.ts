@@ -63,5 +63,15 @@ export const initialProducts: Product[] = [
     imageUrl: 'https://picsum.photos/seed/bazar-shirt/600/400',
     imageHint: 'tshirt preta',
     price: 850
+  },
+  {
+    id: '4',
+    name: 'Garrafa de Água Inteligente',
+    description: 'Mantenha-se hidratado com esta garrafa que rastreia sua ingestão de água e se conecta ao seu smartphone.',
+    category: 'Acessórios',
+    stock: 30,
+    imageUrl: 'https://picsum.photos/seed/smart-bottle/600/400',
+    imageHint: 'garrafa agua',
+    price: 2500
   }
 ];

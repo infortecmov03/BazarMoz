@@ -1,0 +1,449 @@
+{
+  "entities": {
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a product listed on the Bazar Moçambique AI platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the product."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the product."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the product."
+        },
+        "price": {
+          "type": "number",
+          "description": "Price of the product."
+        },
+        "stock": {
+          "type": "number",
+          "description": "Available stock quantity of the product."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the product image.",
+          "format": "uri"
+        },
+        "sellerId": {
+          "type": "string",
+          "description": "Reference to the Seller. (Relationship: Seller 1:N Product)"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "price",
+        "stock",
+        "imageUrl",
+        "sellerId"
+      ]
+    },
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the Bazar Moçambique AI platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the user."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the user.",
+          "format": "email"
+        },
+        "locationLatitude": {
+          "type": "number",
+          "description": "Latitude of the user's location."
+        },
+        "locationLongitude": {
+          "type": "number",
+          "description": "Longitude of the user's location."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "email",
+        "locationLatitude",
+        "locationLongitude"
+      ]
+    },
+    "Order": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Order",
+      "type": "object",
+      "description": "Represents an order placed on the Bazar Moçambique AI platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the order."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User who placed the order. (Relationship: User 1:N Order)"
+        },
+        "orderDate": {
+          "type": "string",
+          "description": "Date and time when the order was placed.",
+          "format": "date-time"
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "Total amount of the order."
+        },
+        "deliveryAddress": {
+          "type": "string",
+          "description": "Delivery address for the order."
+        },
+        "sellerId": {
+          "type": "string",
+          "description": "Reference to the Seller. (Relationship: Seller 1:N Order)"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "orderDate",
+        "totalAmount",
+        "deliveryAddress",
+        "sellerId"
+      ]
+    },
+    "OrderItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "OrderItem",
+      "type": "object",
+      "description": "Represents an item within an order.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the order item."
+        },
+        "orderId": {
+          "type": "string",
+          "description": "Reference to the Order this item belongs to. (Relationship: Order 1:N OrderItem)"
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to the Product being ordered. (Relationship: Product 1:N OrderItem)"
+        },
+        "quantity": {
+          "type": "number",
+          "description": "Quantity of the product in the order item."
+        },
+        "price": {
+          "type": "number",
+          "description": "Price of the product at the time of order."
+        }
+      },
+      "required": [
+        "id",
+        "orderId",
+        "productId",
+        "quantity",
+        "price"
+      ]
+    },
+    "ChatMessage": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ChatMessage",
+      "type": "object",
+      "description": "Represents a chat message between a user and the site owner or AI.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the chat message."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User sending the message. (Relationship: User 1:N ChatMessage)"
+        },
+        "sellerId": {
+          "type": "string",
+          "description": "Reference to the Seller involved in the chat. (Relationship: Seller 1:N ChatMessage)"
+        },
+        "message": {
+          "type": "string",
+          "description": "Content of the chat message."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "Timestamp of when the message was sent.",
+          "format": "date-time"
+        },
+        "senderType": {
+          "type": "string",
+          "description": "Type of sender: 'user', 'seller', or 'ai'."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "sellerId",
+        "message",
+        "timestamp",
+        "senderType"
+      ]
+    },
+    "Seller": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Seller",
+      "type": "object",
+      "description": "Represents a seller on the Bazar Moçambique AI platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the seller."
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the seller."
+        },
+        "locationLatitude": {
+          "type": "number",
+          "description": "Latitude of the seller's fixed location."
+        },
+        "locationLongitude": {
+          "type": "number",
+          "description": "Longitude of the seller's fixed location."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "locationLatitude",
+        "locationLongitude"
+      ]
+    },
+    "DeliveryRate": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "DeliveryRate",
+      "type": "object",
+      "description": "Represents the delivery rate based on distance.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the delivery rate."
+        },
+        "ratePerKm": {
+          "type": "number",
+          "description": "Rate per kilometer for delivery."
+        },
+        "sellerId": {
+          "type": "string",
+          "description": "Reference to the Seller. (Relationship: Seller 1:N DeliveryRate)"
+        }
+      },
+      "required": [
+        "id",
+        "ratePerKm",
+        "sellerId"
+      ]
+    },
+    "AiRecommendation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AiRecommendation",
+      "type": "object",
+      "description": "Represents a product recommendation generated by AI for a specific user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AI recommendation."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the User for whom the recommendation is made. (Relationship: User 1:N AiRecommendation)"
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to the Product being recommended. (Relationship: Product 1:N AiRecommendation)"
+        },
+        "recommendationDate": {
+          "type": "string",
+          "description": "Date and time when the recommendation was generated.",
+          "format": "date-time"
+        },
+        "reason": {
+          "type": "string",
+          "description": "Reason for the recommendation."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "productId",
+        "recommendationDate",
+        "reason"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Stores product information.  `productId` is the unique ID.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "The unique identifier for the product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user information. `userId` is the Firebase Auth UID.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The Firebase Auth UID of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/orders/{orderId}",
+        "definition": {
+          "entityName": "Order",
+          "schema": {
+            "$ref": "#/backend/entities/Order"
+          },
+          "description": "Stores order information. Includes denormalized `userId` and `sellerId` for authorization independence.",
+          "params": [
+            {
+              "name": "orderId",
+              "description": "The unique identifier for the order."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/orders/{orderId}/orderItems/{orderItemId}",
+        "definition": {
+          "entityName": "OrderItem",
+          "schema": {
+            "$ref": "#/backend/entities/OrderItem"
+          },
+          "description": "Stores order item information.  `orderId` references the parent order.",
+          "params": [
+            {
+              "name": "orderId",
+              "description": "The unique identifier for the order."
+            },
+            {
+              "name": "orderItemId",
+              "description": "The unique identifier for the order item."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/chats/{chatId}/messages/{messageId}",
+        "definition": {
+          "entityName": "ChatMessage",
+          "schema": {
+            "$ref": "#/backend/entities/ChatMessage"
+          },
+          "description": "Stores chat messages between a user and a seller. `chatId` is derived from the combined `userId` and `sellerId`. Includes `userId` and `sellerId` for authorization.",
+          "params": [
+            {
+              "name": "chatId",
+              "description": "A unique identifier generated combining the userId and sellerId for secure conversation isolation. For Example: userId_sellerId"
+            },
+            {
+              "name": "messageId",
+              "description": "The unique identifier for the chat message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/sellers/{sellerId}",
+        "definition": {
+          "entityName": "Seller",
+          "schema": {
+            "$ref": "#/backend/entities/Seller"
+          },
+          "description": "Stores seller information.",
+          "params": [
+            {
+              "name": "sellerId",
+              "description": "The unique identifier for the seller."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/sellers/{sellerId}/deliveryRates/{deliveryRateId}",
+        "definition": {
+          "entityName": "DeliveryRate",
+          "schema": {
+            "$ref": "#/backend/entities/DeliveryRate"
+          },
+          "description": "Stores delivery rates for a seller. `sellerId` references the parent seller.",
+          "params": [
+            {
+              "name": "sellerId",
+              "description": "The unique identifier for the seller."
+            },
+            {
+              "name": "deliveryRateId",
+              "description": "The unique identifier for the delivery rate."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/aiRecommendations/{aiRecommendationId}",
+        "definition": {
+          "entityName": "AiRecommendation",
+          "schema": {
+            "$ref": "#/backend/entities/AiRecommendation"
+          },
+          "description": "Stores AI recommendations for a user. `userId` references the user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier for the user."
+            },
+            {
+              "name": "aiRecommendationId",
+              "description": "The unique identifier for the AI recommendation."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "This Firestore structure prioritizes authorization independence and supports the application's requirements for product listings, order management, AI recommendations, and chat functionality. The structure incorporates denormalization to avoid complex security rules and ensures that list operations are secure. Specifically, the delivery rate and seller location are separate to allow easy updates without affecting other documents. The chat messages between users and sellers, facilitated by AI, are structured to ensure secure communication and order tracking, and to enable the notification feature requested. The structure also enables calculating delivery rates based on distance between the buyer and seller, supporting the variable delivery fee requested.\n\n**Authorization Independence:**\n\n*   Order documents include `userId` and `sellerId` for direct authorization checks, avoiding the need to fetch user or seller data during rule evaluation.\n*   ChatMessage documents include `userId` and `sellerId` to authorize access based on the participants.\n*   DeliveryRate documents include `sellerId` to authorize modification only by the seller.\n\n**QAPs Support:**\n\n*   **Product Listings:** Stored in a top-level `/products` collection, allowing for efficient listing and display. Security rules ensure only approved products are visible.\n*   **Order Management:** Orders are stored in `/orders` collection, associated with the user and seller. Security rules ensure that users can only access their own orders and sellers can only access orders related to their products.\n*   **Chat Functionality:** Chat messages are stored in `/chats/{chatId}/messages` collection, with security rules to ensure only participating users and sellers can read and write messages. The `chatId` is generated based on a combination of the `userId` and `sellerId` to keep the conversation isolated for authorized members only.\n*   **Delivery Rate:** Delivery rates are stored in `/sellers/{sellerId}/deliveryRates` subcollection, allowing sellers to manage their own delivery rates and enable secure listing and update operations.\n\n**Denormalization:**\n\n*   `Order` documents denormalize `sellerId` to streamline security rules and avoid `get()` calls to seller documents."
+  }
+}

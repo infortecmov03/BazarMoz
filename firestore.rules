@@ -1,0 +1,208 @@
+/**
+ * This ruleset enforces a security model for an e-commerce platform that balances public browsing with secure, role-based access for users and sellers.
+ *
+ * Core Philosophy:
+ * The security model is built on three primary access patterns:
+ * 1. Public Read, Owner Write: Collections like 'products' and 'sellers' are publicly browsable by anyone, but can only be modified by the authenticated seller who owns the documents.
+ * 2. Strict User Ownership: User-specific data, such as personal information ('/users/{userId}') and AI recommendations, is strictly confined to the authenticated user who owns it.
+ * 3. Shared Access: Collaborative documents like 'orders' and 'chats' are accessible only to the specific participants involved (e.g., the buyer and the seller).
+ *
+ * Data Structure:
+ * The data is organized into several top-level collections (/users, /sellers, /products, /orders, /chats) to segregate public, private, and shared data. User- and seller-specific data is nested in subcollections (e.g., /users/{userId}/aiRecommendations) to leverage path-based security.
+ *
+ * Key Security Decisions:
+ * - Denormalization for Security: Documents such as 'orders' and 'chatMessages' contain denormalized 'userId' and 'sellerId' fields. This is a deliberate design choice to enable fast, secure, and cost-effective authorization checks without needing extra database reads (`get` calls).
+ * - Query-Based Listing: Listing all documents in the '/orders' collection is denied by default. Access is granted only through specific, secured queries where the client must filter by their own 'userId' or 'sellerId', preventing data leakage.
+ * - Path-Based Chat Security: Access to chat messages is determined by the chat room's ID (e.g., '{userId}_{sellerId}'). This ensures that only the two participants can read or write to their conversation, providing strong isolation.
+ * - Seller Identity: A "seller" is defined as an authenticated user whose UID matches the seller document ID or the `sellerId` field on related documents (like products or orders).
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // -------------------------------------------------------------------------
+    // Helper Functions
+    // -------------------------------------------------------------------------
+
+    /**
+     * Checks if a user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the primary function for enforcing user ownership of a document.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided sellerId.
+     * This is the primary function for enforcing seller ownership.
+     */
+    function isSeller(sellerId) {
+      return isSignedIn() && request.auth.uid == sellerId;
+    }
+
+    /**
+     * Ensures the document exists before performing an update or delete,
+     * and confirms ownership. Prevents modifying non-existent data.
+     */
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    /**
+     * Ensures the document exists before performing an update or delete,
+     * and confirms seller ownership.
+     */
+    function isExistingSeller(sellerId) {
+      return isSeller(sellerId) && resource != null;
+    }
+
+    /**
+     * Checks if the requester is a participant (user or seller) in an order
+     * by looking at the fields on the existing order document.
+     */
+    function isOrderParticipant(orderData) {
+      return isOwner(orderData.userId) || isSeller(orderData.sellerId);
+    }
+    
+    /**
+     * Checks if a user is a participant in a chat room based on the chat ID.
+     * The chatId is expected to be in the format: {userId}_{sellerId}.
+     */
+    function isChatParticipant(chatId) {
+      let parts = chatId.split('_');
+      return isSignedIn() && (request.auth.uid == parts[0] || request.auth.uid == parts[1]);
+    }
+
+    // -------------------------------------------------------------------------
+    // User Data Rules
+    // -------------------------------------------------------------------------
+
+    /**
+     * @description Controls access to user profile documents.
+     * @path /users/{userId}
+     * @allow (create) An authenticated user creating their own profile document for the first time.
+     * @deny (get) A user trying to read another user's profile.
+     * @principle Restricts access to a user's own data tree. A user has full control over their document but cannot see others'.
+     */
+    match /users/{userId} {
+      allow get, update, delete: if isExistingOwner(userId);
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow list: if false; // Disallow listing all users for privacy.
+    }
+
+    /**
+     * @description Controls access to AI-generated product recommendations for a user.
+     * @path /users/{userId}/aiRecommendations/{aiRecommendationId}
+     * @allow (get) A user reading a recommendation in their own subcollection.
+     * @deny (create) Another user trying to create a fake recommendation for someone else.
+     * @principle Enforces that a user can only access data nested under their own user ID path.
+     */
+    match /users/{userId}/aiRecommendations/{aiRecommendationId} {
+      allow get, list: if isOwner(userId);
+      // Writes are disallowed from the client; these are likely created by a backend service.
+      allow create, update, delete: if false;
+    }
+
+    // -------------------------------------------------------------------------
+    // Seller & Product Rules
+    // -------------------------------------------------------------------------
+
+    /**
+     * @description Controls access to seller profile documents. Publicly readable.
+     * @path /sellers/{sellerId}
+     * @allow (get) Any user, signed in or not, can view a seller's public profile.
+     * @deny (update) A user trying to maliciously update a seller's location information.
+     * @principle Implements a public-read, owner-write model. Essential for browsing sellers.
+     */
+    match /sellers/{sellerId} {
+      allow get: if true;
+      allow list: if true;
+      allow create: if isSeller(sellerId) && request.resource.data.id == sellerId;
+      allow update, delete: if isExistingSeller(sellerId);
+    }
+    
+    /**
+     * @description Controls access to a seller's specific delivery rates.
+     * @path /sellers/{sellerId}/deliveryRates/{deliveryRateId}
+     * @allow (create) An authenticated seller adding a new delivery rate for their business.
+     * @deny (list) A user trying to list the delivery rates of a seller they are not.
+     * @principle Enforces that only the parent seller can manage their own business-specific sub-collections.
+     */
+    match /sellers/{sellerId}/deliveryRates/{deliveryRateId} {
+      allow get, list: if isSeller(sellerId);
+      allow create: if isSeller(sellerId) && request.resource.data.sellerId == sellerId;
+      allow update, delete: if isExistingSeller(sellerId);
+    }
+    
+    /**
+     * @description Controls access to product documents. Products are public, but managed by sellers.
+     * @path /products/{productId}
+     * @allow (list) Any user, signed in or not, can list and browse all products.
+     * @deny (delete) A user attempting to delete a product they do not own.
+     * @principle Implements a public-read, owner-write model. The 'owner' is the seller identified by the `sellerId` field.
+     */
+    match /products/{productId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && request.resource.data.sellerId == request.auth.uid;
+      allow update, delete: if isExistingSeller(resource.data.sellerId);
+    }
+
+    // -------------------------------------------------------------------------
+    // Order & Chat Rules
+    // -------------------------------------------------------------------------
+
+    /**
+     * @description Controls access to order documents. Access is shared between the buyer and the seller.
+     * @path /orders/{orderId}
+     * @allow (get) The user with UID matching `userId` or `sellerId` on the document can read it.
+     * @deny (list) An anonymous user trying to list all orders on the platform.
+     * @principle Enforces shared access for collaborators. Listing is secured via mandatory query constraints to prevent data leaks.
+     */
+    match /orders/{orderId} {
+      allow get: if isSignedIn() && isOrderParticipant(resource.data);
+      allow create: if isOwner(request.resource.data.userId);
+      allow update, delete: if isSignedIn() && resource != null && isOrderParticipant(resource.data);
+      // Secure list: Users can only query for orders where they are the buyer OR the seller.
+      allow list: if isSignedIn() && (request.query.get('userId') == request.auth.uid || request.query.get('sellerId') == request.auth.uid);
+    }
+    
+    /**
+     * @description Controls access to items within an order. Access is inherited from the parent order.
+     * @path /orders/{orderId}/orderItems/{orderItemId}
+     * @allow (get) A user reading an item from an order they are a participant in.
+     * @deny (list) An authenticated user trying to list items from an order they are not part of.
+     * @principle Secures subcollection access by verifying permissions on the parent document.
+     */
+    match /orders/{orderId}/orderItems/{orderItemId} {
+      // Access to order items depends on being a participant of the parent order document.
+      allow get, list: if isSignedIn() && isOrderParticipant(get(/databases/$(database)/documents/orders/$(orderId)).data);
+      // Writes are disallowed from the client; these are part of the initial order creation transaction.
+      allow create, update, delete: if false;
+    }
+
+    /**
+     * @description Controls access to chat messages. Access is restricted to chat participants.
+     * @path /chats/{chatId}/messages/{messageId}
+     * @allow (create) The buyer or seller in the chat sending a new message.
+     * @deny (get) A third-party user trying to read messages in a private conversation.
+     * @principle Enforces strict conversation isolation using path-based authorization.
+     */
+    match /chats/{chatId}/messages/{messageId} {
+      allow get, list: if isChatParticipant(chatId);
+      allow create: if isChatParticipant(chatId)
+                    && request.resource.data.senderType != 'ai' // Clients cannot send messages as the AI.
+                    && ((request.resource.data.senderType == 'user' && isOwner(request.resource.data.userId)) 
+                        || (request.resource.data.senderType == 'seller' && isSeller(request.resource.data.sellerId)));
+      // Updates and deletes are disallowed for message history integrity.
+      allow update, delete: if false;
+    }
+
+  }
+}

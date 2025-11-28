@@ -2,7 +2,7 @@
 
 import { Menu, ShoppingBag, User as UserIcon, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { CartSheet } from '@/components/cart-sheet';
 import { useState, useMemo } from 'react';
 import { useCart } from '@/contexts/cart-context';
@@ -111,6 +111,9 @@ export function Header() {
                 </Button>
               </SheetTrigger>
               <SheetContent>
+                <SheetHeader>
+                  <SheetTitle className="sr-only">Menu de Navegação</SheetTitle>
+                </SheetHeader>
                 <div className="flex flex-col gap-4 py-6">
                     <Button variant="ghost" className="justify-start gap-2" onClick={() => {
                         const menuTrigger = document.querySelector('[aria-controls="radix-:R1mlaq:"]');

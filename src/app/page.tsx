@@ -8,7 +8,7 @@ export default function Home() {
       <Header />
       <main className="flex-1">
         <div className="container py-8 md:py-12">
-          <ProductShowcase products={products} />
+          <ProductShowcase allProducts={products} />
         </div>
       </main>
       <footer className="border-t py-6 md:px-8 md:py-0">

@@ -1,7 +1,7 @@
 'use client';
 
 import type { Product } from '@/lib/types';
-import { createContext, useContext, useState, ReactNode, useMemo } from 'react';
+import { createContext, useContext, useState, ReactNode, useMemo, useEffect } from 'react';
 
 interface CartItem extends Product {
   quantity: number;
@@ -20,6 +20,22 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+
+  useEffect(() => {
+    try {
+        const storedCart = localStorage.getItem('cartItems');
+        if (storedCart) {
+            setCartItems(JSON.parse(storedCart));
+        }
+    } catch (error) {
+        console.error("Failed to parse cart items from localStorage", error);
+        setCartItems([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('cartItems', JSON.stringify(cartItems));
+  }, [cartItems]);
 
   const addToCart = (product: Product, quantity = 1): boolean => {
     let success = false;
@@ -53,6 +69,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const clearCart = () => {
     setCartItems([]);
+    localStorage.removeItem('cartItems');
   };
 
   const totalPrice = useMemo(() => {

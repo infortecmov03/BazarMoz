@@ -9,7 +9,7 @@ interface CartItem extends Product {
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (product: Product) => void;
+  addToCart: (product: Product, quantity?: number) => boolean;
   removeFromCart: (productId: string) => void;
   clearCart: () => void;
   totalPrice: number;
@@ -21,18 +21,30 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  const addToCart = (product: Product) => {
+  const addToCart = (product: Product, quantity = 1): boolean => {
+    let success = false;
     setCartItems((prevItems) => {
       const existingItem = prevItems.find((item) => item.id === product.id);
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
+      
+      const availableStock = product.stock;
+      const cartQuantity = existingItem ? existingItem.quantity : 0;
+      
+      if (availableStock >= cartQuantity + quantity) {
+        success = true;
+        if (existingItem) {
+          return prevItems.map((item) =>
+            item.id === product.id
+              ? { ...item, quantity: item.quantity + quantity }
+              : item
+          );
+        }
+        return [...prevItems, { ...product, quantity }];
       }
-      return [...prevItems, { ...product, quantity: 1 }];
+      
+      success = false;
+      return prevItems;
     });
+    return success;
   };
 
   const removeFromCart = (productId: string) => {

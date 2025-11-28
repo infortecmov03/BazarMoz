@@ -129,8 +129,7 @@ service cloud.firestore {
      * @principle Implements a public-read, owner-write model. Essential for browsing sellers.
      */
     match /sellers/{sellerId} {
-      allow get: if true;
-      allow list: if true;
+      allow get, list: if true;
       allow create: if isSeller(sellerId) && request.resource.data.id == sellerId;
       allow update, delete: if isExistingSeller(sellerId);
     }
@@ -192,7 +191,7 @@ service cloud.firestore {
       // Writes are disallowed from the client; these are part of the initial order creation transaction.
       allow create, update, delete: if false;
     }
-
+    
     /**
      * @description Controls access to messages in the anonymous chat.
      * Any user can read and write to this specific public chat room.

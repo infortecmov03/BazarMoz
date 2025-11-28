@@ -1,16 +1,19 @@
 'use client';
 
-import { Menu, ShoppingBag } from 'lucide-react';
+import { Menu, ShoppingBag, User as UserIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { CartSheet } from '@/components/cart-sheet';
 import { useState } from 'react';
 import { useCart } from '@/contexts/cart-context';
 import { SearchDialog } from './search-dialog';
+import { useAuth } from '@/firebase';
+import Link from 'next/link';
 
 export function Header() {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { totalItems } = useCart();
+  const { user, isUserLoading } = useAuth();
 
   return (
     <>
@@ -23,7 +26,7 @@ export function Header() {
              <SearchDialog />
           </div>
           <div className="hidden md:flex items-center gap-2">
-            <div className="relative">
+             <div className="relative">
               <Button variant="ghost" size="icon" onClick={() => setIsCartOpen(true)}>
                 <ShoppingBag />
                 <span className="sr-only">Open cart</span>
@@ -34,6 +37,20 @@ export function Header() {
                 </span>
               )}
             </div>
+            {!isUserLoading && (
+              user ? (
+                 <Button variant="ghost" size="icon" asChild>
+                  <Link href="/profile">
+                    <UserIcon />
+                    <span className="sr-only">Profile</span>
+                  </Link>
+                </Button>
+              ) : (
+                <Button asChild>
+                  <Link href="/login">Login</Link>
+                </Button>
+              )
+            )}
           </div>
           <div className="flex items-center gap-2 md:hidden">
             <SearchDialog />
@@ -56,6 +73,17 @@ export function Header() {
                         <ShoppingBag />
                         Carrinho ({totalItems})
                     </Button>
+                     {!isUserLoading && (
+                        user ? (
+                          <Button variant="ghost" className="justify-start gap-2" asChild>
+                            <Link href="/profile"><UserIcon /> Perfil</Link>
+                          </Button>
+                        ) : (
+                           <Button variant="ghost" className="justify-start gap-2" asChild>
+                            <Link href="/login">Login</Link>
+                          </Button>
+                        )
+                      )}
                 </div>
               </SheetContent>
             </Sheet>

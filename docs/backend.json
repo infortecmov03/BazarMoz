@@ -65,6 +65,11 @@
           "description": "Email address of the user.",
           "format": "email"
         },
+        "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "The timestamp of when the user account was created."
+        },
         "locationLatitude": {
           "type": "number",
           "description": "Latitude of the user's location."
@@ -78,8 +83,7 @@
         "id",
         "name",
         "email",
-        "locationLatitude",
-        "locationLongitude"
+        "createdAt"
       ]
     },
     "Order": {

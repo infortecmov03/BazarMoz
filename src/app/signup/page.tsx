@@ -64,10 +64,10 @@ export default function SignupPage() {
 
       toast({
         title: 'Conta criada com sucesso!',
-        description: 'Você será redirecionado para a página de perfil.',
+        description: 'Você será redirecionado para a página principal.',
       });
 
-      router.push('/profile');
+      router.push('/');
     } catch (error: any) {
       toast({
         variant: 'destructive',

@@ -1,12 +1,12 @@
 'use client';
 
 import React, { useState, useEffect, type ReactNode } from 'react';
-import { FirebaseProvider } from '@/firebase/provider';
+import { FirebaseProvider } from '@/firebase/providers/provider';
 import { FirebaseApp, getApps, getApp, initializeApp } from 'firebase/app';
 import { Auth, getAuth } from 'firebase/auth';
 import { Firestore, getFirestore } from 'firebase/firestore';
 import { Loader2 } from 'lucide-react';
-import { firebaseConfig } from './config';
+import { firebaseConfig } from '../config';
 
 interface FirebaseClientProviderProps {
   children: ReactNode;

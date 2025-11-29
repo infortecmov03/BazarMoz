@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { CartProvider } from '@/contexts/cart-context';
 import { Toaster } from '@/components/ui/toaster';
-import { FirebaseClientProvider } from '@/firebase';
+import { FirebaseClientProvider } from '@/firebase/providers/client-provider';
 
 export const metadata: Metadata = {
   title: 'BazarMoz',

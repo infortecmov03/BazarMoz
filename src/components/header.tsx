@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { CartSheet } from '@/components/cart-sheet';
 import { useState, useMemo } from 'react';
 import { useCart } from '@/contexts/cart-context';
-import { useUser, useFirebase, useMemoFirebase } from '@/firebase';
+import { useUser, useFirebase } from '@/firebase/providers/provider';
 import Link from 'next/link';
 import {
   DropdownMenu,
@@ -22,6 +22,7 @@ import {
 import { useCollection } from '@/firebase/firestore/use-collection';
 import { collection } from 'firebase/firestore';
 import { Product } from '@/lib/types';
+import { useMemoFirebase } from '@/firebase/providers/provider';
 
 
 export function Header() {

@@ -3,7 +3,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import type { Product } from '@/lib/types';
 import { ProductList } from './product-list';
-import { Recommendations } from './recommendations';
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
@@ -108,9 +107,7 @@ export function ProductShowcase() {
   );
 
   return (
-    <div className="space-y-12">
-      <Recommendations />
-      
+    <div className="space-y-12">      
       <div>
         <div className="mb-8 flex flex-col gap-4 rounded-lg border bg-card p-6 shadow-sm md:flex-row md:items-center md:justify-between">
             <h2 className="text-3xl font-bold tracking-tight">Nossos Produtos</h2>

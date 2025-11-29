@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { useCart } from '@/contexts/cart-context';
 import { useToast } from '@/hooks/use-toast';
 import { ShoppingCart } from 'lucide-react';
-import { Recommendations } from '@/components/recommendations';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { useFirebase, useMemoFirebase } from '@/firebase';
@@ -218,7 +217,7 @@ export default function ProductDetailPage() {
             </div>
           </div>
           <div className="mt-16">
-            <Recommendations />
+            {/* Recommendations removed */}
           </div>
         </div>
       </main>

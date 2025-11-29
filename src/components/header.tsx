@@ -6,7 +6,6 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { CartSheet } from '@/components/cart-sheet';
 import { useState, useMemo } from 'react';
 import { useCart } from '@/contexts/cart-context';
-import { SearchDialog } from './search-dialog';
 import { useUser, useFirebase, useMemoFirebase } from '@/firebase';
 import Link from 'next/link';
 import {
@@ -72,7 +71,7 @@ export function Header() {
           </div>
 
           <div className="hidden flex-1 md:flex justify-center">
-             <SearchDialog />
+             {/* SearchDialog removed */}
           </div>
           <div className="hidden md:flex items-center gap-2">
              <div className="relative">
@@ -102,7 +101,7 @@ export function Header() {
             )}
           </div>
           <div className="flex items-center gap-2 md:hidden">
-            <SearchDialog />
+            {/* SearchDialog removed */}
             <Sheet>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon">

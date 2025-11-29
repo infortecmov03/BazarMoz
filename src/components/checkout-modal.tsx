@@ -16,7 +16,6 @@ import { serverTimestamp } from 'firebase/firestore';
 import { useEffect, useState, useTransition } from 'react';
 import { Gift, Loader2, Truck } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { calculateDeliveryFee } from '@/ai/flows/delivery-fee-flow';
 import { Separator } from './ui/separator';
 
 interface CheckoutModalProps {
@@ -37,7 +36,7 @@ export function CheckoutModal({ isOpen, onOpenChange }: CheckoutModalProps) {
   const { toast } = useToast();
   
   const [availableDiscount, setAvailableDiscount] = useState(0);
-  const [deliveryFee, setDeliveryFee] = useState<number | null>(null);
+  const [deliveryFee, setDeliveryFee] = useState<number | null>(0);
   const [isDiscountApplied, setIsDiscountApplied] = useState(false);
   
   const [isCalculatingFee, startFeeCalculation] = useTransition();
@@ -55,19 +54,8 @@ export function CheckoutModal({ isOpen, onOpenChange }: CheckoutModalProps) {
         if (userSnap.exists()) {
           const userData = userSnap.data();
           setAvailableDiscount(userData?.availableDiscount || 0);
-
-          if(userData?.locationLatitude && userData?.locationLongitude) {
-            startFeeCalculation(async () => {
-              const feeResponse = await calculateDeliveryFee({
-                userLatitude: userData.locationLatitude,
-                userLongitude: userData.locationLongitude,
-                sellerId: 'default-seller', // Placeholder
-              });
-              setDeliveryFee(feeResponse.deliveryFee);
-            });
-          } else {
-            setDeliveryFee(0); // No location, no fee
-          }
+          // IA calculation removed, setting fee to 0
+          setDeliveryFee(0);
         }
       }
     }
@@ -78,7 +66,7 @@ export function CheckoutModal({ isOpen, onOpenChange }: CheckoutModalProps) {
     // Reset state when modal closes
     if (!isOpen) {
       setIsDiscountApplied(false);
-      setDeliveryFee(null);
+      setDeliveryFee(0);
     }
   }, [isOpen]);
 
@@ -234,14 +222,9 @@ export function CheckoutModal({ isOpen, onOpenChange }: CheckoutModalProps) {
                         <span>MT{(deliveryFee ?? 0).toFixed(2)}</span>
                      )}
                 </div>
-                {deliveryFee === 0 && !isCalculatingFee && (
-                    <p className="text-xs text-muted-foreground text-center pt-1">
-                        A taxa de entrega é calculada com base na sua localização.
-                        <Button variant="link" size="sm" className="p-1 h-auto" onClick={() => router.push('/profile')}>
-                            Adicionar localização no seu perfil.
-                        </Button>
-                    </p>
-                )}
+                 <p className="text-xs text-muted-foreground text-center pt-1">
+                    O cálculo da taxa de entrega está temporariamente indisponível.
+                 </p>
             </div>
 
             <Separator />
